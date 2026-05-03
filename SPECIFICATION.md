@@ -548,7 +548,6 @@ Build Bóthar as a **mobile-first PWA** (Next.js 15 + Tailwind), with **Privy em
 
 1. `Bothar-program-spec.md` — Anchor program: instructions, accounts, errors, security model
 2. `Bothar-website-spec.md` — Next.js routes, components, Privy + wallet adapter integration
-3. `Bothar-design.md` — visual design system (rural-Ireland-flavoured, minimal, warm)
-4. Indexer / trip search strategy
-5. Demo script and pitch deck outline
-6. TOS + Privacy drafts (counsel review required)
+3. Indexer / trip search strategy
+4. Demo script and pitch deck outline
+5. TOS + Privacy drafts (counsel review required)
