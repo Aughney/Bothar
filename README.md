@@ -34,7 +34,14 @@ The crypto is invisible to the user. The win is "I got home and the driver got p
 
 ## Status
 
-Pre-MVP. Specification and build plan in [`SPECIFICATION.md`](SPECIFICATION.md) _(coming soon)_.
+Pre-MVP. Bootstrapped landing page on Next.js 15 + Tailwind v4 + Privy. The substantive docs:
+
+| File                                   | Purpose                                                                                                          |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [`SPECIFICATION.md`](SPECIFICATION.md) | Product spec — user stories, ride lifecycle, escrow, on-chain model, ADR                                         |
+| [`DESIGN.md`](DESIGN.md)               | Visual identity — colours, typography, components ([format spec](https://github.com/google-labs-code/design.md)) |
+| [`AGENTS.md`](AGENTS.md)               | Repo state and verified commands for coding agents                                                               |
+| [`anchor/README.md`](anchor/README.md) | Anchor program scaffold + toolchain notes                                                                        |
 
 ## License
 

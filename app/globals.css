@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-irish-green: #169b62;
+  --color-irish-green-dark: #0e5e2c;
+  --color-cream: #f7f3e9;
+  --font-display: var(--font-display), serif;
+}
+
+:root {
+  --background: var(--color-irish-green);
+  --foreground: var(--color-cream);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-display);
+}
