@@ -16,9 +16,8 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    versioning-strategy: increase
+    # v3 requires config changes + Turbopack incompatibility - stay on v2 until resolved
     ignore:
       - dependency-name: "@privy-io/react-auth"
         update-types:
-          - "major"
-          # v3 requires config changes + Turbopack incompatibility - stay on v2 until resolved
+          - "version-update:semver-major"
