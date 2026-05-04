@@ -5,6 +5,7 @@
 - **Bóthar** is a Solana-powered lift-share network for rural communities where taxis and public transport are absent or unreliable.
 - A passenger posts a trip, a verified neighbour accepts, and the fare sits in **USDC escrow** on Solana until the ride is confirmed completed.
 - Identity is **wallet-based**, with embedded wallets (Privy) so non-crypto users can log in with Google or email and never see a seed phrase.
+- Drivers must complete an off-chain licence verification flow before accepting trips; for the hackathon demo this is a mocked upload + admin approval flow, not automated KYC.
 - Reputation is **on-chain and portable**: completed rides, ratings, and an optional "Local Verified" badge live with the user's wallet, not in our database.
 - v1 ships as a **mobile-first PWA** (Next.js + Tailwind). Native (Expo + Solana Mobile Wallet Adapter) is a v2 path.
 - Built for the **Colosseum Frontier** hackathon (06-04-2026 → 11-05-2026). MVP is judged on a working end-to-end demo, not feature breadth.
@@ -37,6 +38,7 @@ This is **community cost-sharing**, not a commercial taxi service. No commission
 ## 2.1 Primary goals
 
 - Let rural users coordinate verified shared rides with a few taps.
+- Require drivers to pass a lightweight licence check before they can accept a trip.
 - Settle ride fares instantly in USDC on Solana, held in escrow until the ride completes.
 - Build portable on-chain reputation that travels with the user across the network.
 - Onboard non-crypto users without seed phrases (embedded wallets, social login).
@@ -51,7 +53,7 @@ This is **community cost-sharing**, not a commercial taxi service. No commission
 ## 2.3 Non-goals (v1)
 
 - No commercial taxi replacement positioning.
-- No KYC, no government ID verification, no background checks.
+- No third-party automated KYC provider, no background checks, and no production-grade government ID verification in v1. Driver licence verification is included only as a mocked, off-chain trust gate for the hackathon demo.
 - No real-time GPS tracking during the ride.
 - No multi-passenger fare splitting (one passenger per booking in v1).
 - No native mobile app.
@@ -80,6 +82,10 @@ As a passenger, I want to post a trip from my village to a destination with a da
 ## 3.4 Driver
 
 As a driver already making a journey, I want to browse trips that match my route and accept one, so I can earn a fair contribution to my fuel costs.
+
+## 3.4.1 Driver licence verification
+
+As a driver, I want to submit a photo of my driving licence and know when I am approved, so passengers can trust that only reviewed drivers can accept trips.
 
 ## 3.5 Escrow
 
@@ -140,10 +146,57 @@ Drivers browse trips matching their plans:
 - List view sorted by departure time ascending.
 - Each entry shows: passenger display name, reputation summary (rides + avg rating), origin → destination, time window, offered fare in EUR (with USDC equivalent), distance estimate.
 
+## 4.2.1 Driver licence verification (driver KYC)
+
+Purpose: v1 adds a lightweight driver licence check to raise passenger trust before allowing a user to act as a driver. This is **not** a taxi licence check, automated third-party KYC, criminal background check, or production-grade identity verification.
+
+Hackathon scope:
+
+- Mocked in-app upload and review flow only.
+- No third-party identity provider integration (e.g. no Stripe Identity, Onfido, Persona).
+- No automatic document authenticity checks.
+- No on-chain badge or reputation mutation when approved.
+- Verification status is stored off-chain in Supabase and enforced by the app/backend before trip acceptance.
+
+Driver flow:
+
+- Unverified drivers can browse the feed and view trip detail pages.
+- Before accepting a trip, the app checks the driver's off-chain licence verification status.
+- If status is missing, pending, or rejected, acceptance is blocked and the driver is sent to the licence verification flow.
+- The driver uploads one licence image, reviews a short privacy notice, and confirms they hold a valid driving licence and that their insurance permits non-commercial cost-sharing.
+- Submission status becomes **Pending review**.
+- If approved, the driver may accept trips.
+- If rejected, the driver sees the admin's rejection reason and can resubmit.
+
+Admin flow:
+
+- Admin route: `/admin/kyc`.
+- Admins can view pending, approved, and rejected submissions.
+- Each pending submission shows the submitting account, submission time, and a private preview of the licence image.
+- Admin can approve, or reject with a required reason.
+- Approval sets the driver verification status to **Approved**.
+- Rejection sets status to **Rejected** and stores the rejection reason for the driver to see.
+
+Privacy and storage rules:
+
+- Licence images are stored off-chain in a private Supabase Storage bucket.
+- Licence images are never written on-chain, never shown publicly, and never shown to passengers.
+- Public UI may show only a simple "Driver verified" trust indicator.
+- Access to licence images is limited to the submitting driver and authorised admins via short-lived signed URLs.
+- Retention and deletion policy is TBD before production launch.
+
+Rules:
+
+- Verification is scoped to the driver's current Privy/Solana account. A new account starts unverified.
+- The app/backend must check approved status before constructing or submitting any trip acceptance action.
+- Because this status is off-chain in v1, it is an app-level trust gate only; production should consider an on-chain badge, admin-signed attestation, or server-mediated acceptance if direct program calls must be blocked.
+
 ## 4.3 Trip acceptance (driver)
 
 When a driver accepts a trip:
 
+- Driver must have **Approved** off-chain licence verification status before accepting.
+- If the driver is unverified, pending, or rejected, acceptance is blocked and the driver sees the licence verification status screen.
 - Driver's wallet does not need to deposit anything (driver is the payee).
 - Passenger's wallet is prompted to fund escrow with the agreed USDC amount.
 - Trip state moves to **Accepted, Awaiting Funding**.
@@ -186,7 +239,8 @@ Either party can raise a dispute before escrow has released. v1 dispute handling
 - Login via **Privy** (Google, email, or existing Solana wallet).
 - Privy provisions an **embedded Solana wallet** for users who don't bring one.
 - Display name defaults to "Local Lift #1234" until the user sets a nickname.
-- No real names are required or surfaced in v1.
+- No real names are required or surfaced publicly in v1.
+- Driver licence verification is separate from login: licence images are private off-chain admin-review material and are never displayed publicly.
 
 ## 4.8 Reputation
 
@@ -198,6 +252,8 @@ Each user wallet accumulates:
 - `localVerified` (bool, set by issuer authority)
 
 All four are read from on-chain accounts and displayed on profile cards.
+
+Driver licence verification is **not** part of the on-chain reputation account in v1. The "Driver verified" indicator is an app-level, off-chain status read from Supabase.
 
 ## 4.9 Ratings
 
@@ -275,19 +331,21 @@ Goal: onboarding to first useful screen in **under 30 seconds**, no crypto vocab
 
 # 6. Pages and routes
 
-| Route         | Auth                          | Purpose                            |
-| ------------- | ----------------------------- | ---------------------------------- |
-| `/`           | Public                        | Landing + active trip ticker       |
-| `/feed`       | Public read, auth to interact | Region/route trip feed             |
-| `/post`       | Auth                          | Trip composer                      |
-| `/trips/[id]` | Public                        | Trip detail                        |
-| `/rides`      | Auth                          | My rides (active + past)           |
-| `/u/[wallet]` | Public                        | Profile + reputation               |
-| `/profile`    | Auth                          | My profile + settings              |
-| `/about`      | Public                        | How it works                       |
-| `/payments`   | Public                        | How payments work (USDC explainer) |
-| `/terms`      | Public                        | Terms of Service                   |
-| `/privacy`    | Public                        | Privacy Policy                     |
+| Route                          | Auth                          | Purpose                            |
+| ------------------------------ | ----------------------------- | ---------------------------------- |
+| `/`                            | Public                        | Landing + active trip ticker       |
+| `/feed`                        | Public read, auth to interact | Region/route trip feed             |
+| `/post`                        | Auth                          | Trip composer                      |
+| `/trips/[id]`                  | Public                        | Trip detail                        |
+| `/rides`                       | Auth                          | My rides (active + past)           |
+| `/u/[wallet]`                  | Public                        | Profile + reputation               |
+| `/profile`                     | Auth                          | My profile + settings              |
+| `/profile/driver-verification` | Auth                          | Driver licence submission + status |
+| `/admin/kyc`                   | Admin only                    | Review driver licence submissions  |
+| `/about`                       | Public                        | How it works                       |
+| `/payments`                    | Public                        | How payments work (USDC explainer) |
+| `/terms`                       | Public                        | Terms of Service                   |
+| `/privacy`                     | Public                        | Privacy Policy                     |
 
 ---
 
@@ -324,11 +382,27 @@ Goal: onboarding to first useful screen in **under 30 seconds**, no crypto vocab
 - `stars` (1-5)
 - `commentHash` (off-chain comment, hashed for integrity)
 
-## 7.4 Off-chain vs on-chain split
+## 7.4 Driver KYC submission (off-chain)
+
+- `id` (uuid)
+- `wallet` (driver's Privy/Solana account)
+- `status` (`Pending` / `Approved` / `Rejected`)
+- `licenceImagePath` (private Supabase Storage path)
+- `declarationAcceptedAt`
+- `submittedAt`
+- `reviewedAt` (nullable)
+- `reviewedBy` (nullable admin account)
+- `rejectionReason` (nullable, required when rejected)
+- `createdAt`, `updatedAt`
+
+No licence number, full legal name, date of birth, or extracted document fields are stored in v1. The hackathon implementation stores only the uploaded image path and review status needed to demo the trust gate.
+
+## 7.5 Off-chain vs on-chain split
 
 - **On-chain**: escrow program state, reputation accounts, ratings, verification badges.
-- **Off-chain (Postgres / Supabase)**: trip listings (origin/destination text, search-friendly), user nicknames, comments, push subscriptions.
+- **Off-chain (Postgres / Supabase)**: trip listings (origin/destination text, search-friendly), user nicknames, comments, push subscriptions, driver licence submission metadata, and driver verification status.
 - Trip ID anchors both sides: created off-chain, then referenced on-chain when escrow is funded.
+- Driver KYC status is deliberately off-chain in v1 and does not mutate Solana reputation accounts.
 
 ---
 
@@ -339,7 +413,7 @@ A single Anchor program handles escrow, reputation, ratings, and verification. D
 ## 8.1 Instructions (sketch)
 
 - `init_trip(trip_id, fare)` — creates an escrow PDA, transfers USDC from passenger
-- `accept_trip(trip_id)` — sets driver pubkey on the escrow PDA
+- `accept_trip(trip_id)` — sets driver pubkey on the escrow PDA; the v1 app/backend must check off-chain driver verification before exposing or submitting this action
 - `complete_trip(trip_id)` — passenger-signed release to driver
 - `auto_release(trip_id)` — anyone can call after `depart_at + 24h` if not disputed
 - `dispute(trip_id)` — either party freezes the escrow
@@ -390,6 +464,16 @@ A single Anchor program handles escrow, reputation, ratings, and verification. D
 - Only authorised issuer wallets can issue badges.
 - Issuers are added/removed by the program upgrade authority (multisig in v1).
 - A user can hold badges from multiple issuers.
+- Driver licence verification is separate from issuer badges in v1: it is reviewed by platform admins, stored off-chain, and gates trip acceptance in the app/backend.
+- Approved driver licence status does not imply employment, taxi licensing, insurance validation, or platform endorsement; it only means the submitted licence image passed the manual demo review.
+
+## 9.4.1 Driver KYC rules
+
+- A driver must have **Approved** licence verification status before accepting any trip.
+- Pending or rejected drivers may browse trips but cannot accept them.
+- Rejected drivers can resubmit after reading the rejection reason.
+- Admin review actions must be auditable through timestamps and reviewer identity.
+- Production launch requires a reviewed retention/deletion policy for licence images.
 
 ## 9.5 Content rules
 
@@ -414,6 +498,7 @@ Moderation in v1 is manual: admin can hide off-chain trip listings; on-chain rat
 ## 10.2 Safety features (v1 minimum)
 
 - Both parties' display names, reputation, and verification status are visible before acceptance.
+- Drivers must complete the mocked licence verification flow before they can accept trips.
 - Trip details (route + scheduled time) can be shared via system share sheet to a contact.
 - "Report" button on every profile and trip surfaces it to admin.
 - Emergency contact field (optional) on profile, surfaceable from an in-ride screen.
@@ -427,12 +512,16 @@ Moderation in v1 is manual: admin can hide off-chain trip listings; on-chain rat
 
 - Wallet addresses are public on-chain; nicknames are public in-app.
 - Coordinates are stored as approximate (village-level pins) unless the user pins a precise location.
-- No real names, phone numbers, or government IDs collected in v1.
+- Passenger flow does not collect real names, phone numbers, or government IDs in v1.
+- Driver licence images are collected only for the driver verification flow, stored privately off-chain, and never shown publicly.
+- The app must avoid extracting or displaying licence personal details in the hackathon demo.
 
 ## 10.5 Legal disclaimers
 
 - Permanence: completed rides and ratings are immutable on-chain.
 - Jurisdiction: TBD (likely Ireland for v1 pilot).
+- Driver licence review is a trust-and-safety signal, not a guarantee that the driver is licensed, insured, suitable, or operating legally for a specific ride.
+- Because licence images are sensitive personal data, production launch requires counsel-reviewed Privacy and TOS language before collecting real documents.
 - TOS / Privacy text drafted separately, must be reviewed by counsel before any production launch.
 
 ---
@@ -445,26 +534,35 @@ Moderation in v1 is manual: admin can hide off-chain trip listings; on-chain rat
 - Embedded wallet provisioning fails → retry; surface support contact.
 - User signs in on a new device → reputation and rides follow the wallet.
 
-## 11.2 Funding
+## 11.2 Driver licence verification
+
+- Driver attempts to accept a trip with no verification submission → block acceptance and route to `/profile/driver-verification`.
+- Driver submission is pending → show pending review state and keep acceptance blocked.
+- Driver submission is rejected → show rejection reason and allow resubmission.
+- Licence image upload fails → keep previous status, show retry, and do not create a partial pending submission.
+- Admin rejects without a reason → reject action is blocked in the admin UI.
+- Admin approval succeeds but passenger feed has stale data → acceptance check still uses latest server-side status before moving the trip to Accepted.
+
+## 11.3 Funding
 
 - Insufficient USDC balance → surface on-ramp link.
 - Funding transaction fails or expires (15 min timeout) → trip returns to Open, driver notified.
 - Network congestion → standard retry UX.
 
-## 11.3 Ride lifecycle
+## 11.4 Ride lifecycle
 
 - Driver no-shows → passenger raises dispute before auto-release.
 - Passenger no-shows → driver raises dispute before auto-release.
 - Both parties confirm completion → no conflict, escrow releases to driver.
 - Trip cancelled by passenger after acceptance but before funding → no escrow movement; reputation hit (TBD whether this counts).
 
-## 11.4 Reputation / rating
+## 11.5 Reputation / rating
 
 - User submits two ratings for the same ride → second rejected by program.
 - Rating window expires (7 days) → no rating recorded.
 - User attempts to rate a counterparty they were not paired with → rejected by program.
 
-## 11.5 PWA-specific
+## 11.6 PWA-specific
 
 - iOS Safari notifications require add-to-home-screen → onboarding prompts the install.
 - Geolocation denied → user enters location manually.
@@ -478,12 +576,14 @@ A v1 demo is successful if a single end-to-end flow works on **devnet**:
 
 1. Niamh (passenger) signs up with Google via Privy.
 2. She posts a trip "Schull → Cork, Saturday 18:00, €15".
-3. A driver wallet (pre-seeded) accepts the trip in a second browser/device.
-4. Niamh funds the escrow with one tap.
-5. After the (simulated) scheduled time, she taps "Confirm completed".
-6. Escrow releases USDC to the driver wallet on devnet.
-7. Both parties leave a rating; reputation accounts update.
-8. The driver's profile now shows `1 ride as driver, 5★ avg`.
+3. A driver wallet (pre-seeded) submits a mocked driving licence image.
+4. An admin approves the driver in `/admin/kyc`.
+5. The approved driver accepts the trip in a second browser/device.
+6. Niamh funds the escrow with one tap.
+7. After the (simulated) scheduled time, she taps "Confirm completed".
+8. Escrow releases USDC to the driver wallet on devnet.
+9. Both parties leave a rating; reputation accounts update.
+10. The driver's profile now shows `1 ride as driver, 5★ avg` plus an app-level "Driver verified" indicator.
 
 Stretch goal: "Local Verified" badge issuance from an event-organiser wallet, displayed on the profile.
 
@@ -498,6 +598,9 @@ Stretch goal: "Local Verified" badge issuance from an event-organiser wallet, di
 - Should drivers be able to post **offers** ("I'm driving Cork → Schull at 17:00") in addition to passengers posting requests? — strong "yes" signal for hackathon demo richness.
 - Should rating comments be on-chain or off-chain only? (lean off-chain for v1)
 - Multi-passenger pooling — punt to v2.
+- What licence-image retention period is appropriate before production?
+- Should production use a third-party ID verification provider, an on-chain admin attestation, or keep manual review?
+- What admin roles are allowed to approve/reject driver licence submissions?
 
 ## Technical
 
@@ -550,4 +653,5 @@ Build Bóthar as a **mobile-first PWA** (Next.js 15 + Tailwind), with **Privy em
 2. `Bothar-website-spec.md` — Next.js routes, components, Privy + wallet adapter integration
 3. Indexer / trip search strategy
 4. Demo script and pitch deck outline
-5. TOS + Privacy drafts (counsel review required)
+5. Driver KYC/admin workflow spec
+6. TOS + Privacy drafts (counsel review required)
