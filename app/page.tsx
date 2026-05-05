@@ -163,12 +163,13 @@ export default function Home() {
 
             <li className="flex items-start gap-3">
               <svg className="h-6 w-6 flex-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1" fill="none" />
-                <path d="M12 8v5l3 2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M3 12h18" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M6 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M18 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
               </svg>
               <div>
-                <strong className="block text-[var(--color-cream)]">Emergency support</strong>
-                Clear guidance and quick links to call emergency services, plus a local community escalation route.
+                <strong className="block text-[var(--color-cream)]">Share your route</strong>
+                Easily share your route with a friend or family member — especially useful the first time you travel with someone new.
               </div>
             </li>
 
