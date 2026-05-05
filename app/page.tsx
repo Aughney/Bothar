@@ -130,6 +130,66 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Safety-first section */}
+        <section className="w-full mt-8 p-6 rounded bg-[rgba(255,255,255,0.03)] max-w-3xl">
+          <h3 className="text-xl font-semibold text-[var(--color-cream)]">Safety first</h3>
+          <p className="mt-3 text-[var(--color-cream)]/90">
+            Safety is central to Bóthar. We design the service so people feel comfortable sharing journeys — especially
+            in rural areas where transport options are limited.
+          </p>
+
+          <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-[var(--color-cream)]/90">
+            <li className="flex items-start gap-3">
+              <svg className="h-6 w-6 flex-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M12 2 L3 6v5c0 5 4 9 9 11 5-2 9-6 9-11V6l-9-4z" stroke="currentColor" strokeWidth="1" fill="none" />
+              </svg>
+              <div>
+                <strong className="block text-[var(--color-cream)]">Verified drivers</strong>
+                Short bio, reputation badges and optional licence checks help passengers make informed choices.
+              </div>
+            </li>
+
+            <li className="flex items-start gap-3">
+              <svg className="h-6 w-6 flex-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M3 12h18" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M6 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M18 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+              </svg>
+              <div>
+                <strong className="block text-[var(--color-cream)]">Share trip details</strong>
+                Optional in-trip location sharing with a trusted contact gives extra reassurance for both riders and drivers.
+              </div>
+            </li>
+
+            <li className="flex items-start gap-3">
+              <svg className="h-6 w-6 flex-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1" fill="none" />
+                <path d="M12 8v5l3 2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <div>
+                <strong className="block text-[var(--color-cream)]">Emergency support</strong>
+                Clear guidance and quick links to call emergency services, plus a local community escalation route.
+              </div>
+            </li>
+
+            <li className="flex items-start gap-3">
+              <svg className="h-6 w-6 flex-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1" fill="none" />
+                <path d="M7 9h10" stroke="currentColor" strokeWidth="1" />
+              </svg>
+              <div>
+                <strong className="block text-[var(--color-cream)]">Masked contact</strong>
+                Contact details are only exchanged after a booking is confirmed to prevent unwanted contact beforehand.
+              </div>
+            </li>
+          </ul>
+
+          <div className="mt-4 flex gap-3">
+            <a href="/how-it-works" className="text-[var(--color-cream)] underline">Read safety details</a>
+            <a href="/signin?role=passenger" className="inline-block bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded">Find a safe ride</a>
+          </div>
+        </section>
+
         <article className="mt-8 bg-[rgba(255,255,255,0.03)] p-6 rounded max-w-3xl">
           <h2 className="text-2xl font-semibold text-[var(--color-cream)]">Why Bóthar</h2>
           <p className="mt-3 text-[var(--color-cream)]/90">
