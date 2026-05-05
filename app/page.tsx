@@ -32,6 +32,10 @@ export default function Home() {
           solo journeys, and earn on-chain reputation on Solana for reliable, safer rides.
         </p>
 
+        <div className="mt-4 max-w-3xl p-4 rounded bg-[rgba(255,255,255,0.02)]">
+          <p className="text-[var(--color-cream)]/95 font-semibold">We should be able to rely on our communities.</p>
+        </div>
+
         <div className="flex gap-4">
           <a
             href="/signin?role=passenger"
