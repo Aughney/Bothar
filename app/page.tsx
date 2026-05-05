@@ -136,6 +136,7 @@ export default function Home() {
             <li>Lower commuting costs and less congestion for rural communities.</li>
             <li>Reward good driving behaviour with on-chain reputation on Solana.</li>
             <li>Community-first: privacy-respecting, not commercial taxi service.</li>
+            <li>No ride-hail services (like Uber) are available in many rural areas — Bóthar connects drivers and passengers directly.</li>
           </ul>
         </article>
       </section>
