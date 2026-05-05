@@ -163,13 +163,13 @@ export default function Home() {
 
             <li className="flex items-start gap-3">
               <svg className="h-6 w-6 flex-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                <path d="M3 12h18" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                <path d="M6 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                <path d="M18 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1" fill="none" />
+                <path d="M8 12h8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M12 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
               </svg>
               <div>
-                <strong className="block text-[var(--color-cream)]">Share your route</strong>
-                Easily share your route with a friend or family member — especially useful the first time you travel with someone new.
+                <strong className="block text-[var(--color-cream)]">Earn in crypto — get rewarded for being economic</strong>
+                Choose to share rides and earn small on-chain rewards or priority in matching for reducing solo trips.
               </div>
             </li>
 
