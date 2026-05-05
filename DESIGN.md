@@ -13,7 +13,7 @@ typography:
     letterSpacing: 0.2em
 components:
   page:
-    backgroundColor: "{colors.irish-green}"
+    backgroundColor: "{colors.irish-green-dark}"
     textColor: "{colors.cream}"
   wordmark:
     typography: "{typography.wordmark}"
