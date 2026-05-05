@@ -1,4 +1,5 @@
 import Navbar from "./components/Navbar";
+import { SolanaLogo } from "./components/Icons";
 
 export default function Home() {
   return (
@@ -46,6 +47,34 @@ export default function Home() {
             I can offer a lift
           </a>
         </div>
+
+        {/* On-chain reputation section */}
+        <section className="w-full mt-8 p-6 rounded bg-[rgba(0,0,0,0.06)] max-w-3xl">
+          <div className="flex items-start gap-4">
+            <div className="mt-1">
+              <SolanaLogo className="h-8 w-auto" />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--color-cream)]">On-chain reputation — Earn trust on Solana</h3>
+              <p className="mt-2 text-[var(--color-cream)]/90">
+                Build a public, verifiable reputation for reliable, safer rides. After each completed trip both
+                passengers and drivers can give feedback; positive ratings mint lightweight reputation badges on Solana.
+                These badges are fast, low-cost to update, and help you get matched more often.
+              </p>
+
+              <ul className="mt-3 list-disc pl-5 text-[var(--color-cream)]/90 space-y-1">
+                <li>Fast, low-cost updates on Solana.</li>
+                <li>Privacy-first: only minimal trust signals are stored on-chain.</li>
+                <li>Earn rewards and priority matching as your reputation grows.</li>
+              </ul>
+
+              <div className="mt-4 flex gap-3">
+                <a href="/how-it-works" className="inline-block text-[var(--color-cream)] underline">Learn how it works</a>
+                <a href="/signin?role=driver" className="inline-block bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded">Get started</a>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <article className="mt-8 bg-[rgba(255,255,255,0.03)] p-6 rounded max-w-3xl">
           <h2 className="text-2xl font-semibold text-[var(--color-cream)]">Why Bóthar</h2>
