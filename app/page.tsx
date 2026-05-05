@@ -24,7 +24,8 @@ export default function Home() {
               Bóthar
             </h1>
             <p className="mt-1 text-[var(--color-cream)]/85 text-lg">Irish for "road"</p>
-            <h2 className="mt-4 text-2xl sm:text-3xl font-semibold text-[var(--color-cream)]">Public transport stops. We don't.</h2>
+            <h2 className="mt-4 text-2xl sm:text-3xl font-semibold text-[var(--color-cream)]">Dependable when transit isn't.</h2>
+            <p className="mt-1 text-[var(--color-cream)]/85 text-lg">Where buses won't go, we will.</p>
           </div>
         </div>
 
