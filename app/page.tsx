@@ -27,8 +27,8 @@ export default function Home() {
         </div>
 
         <p className="max-w-3xl text-lg leading-relaxed text-[var(--color-cream)]/95">
-          A community-first, low-cost lift-share for rural Ireland. Connect drivers and passengers travelling the
-          same routes, reduce solo journeys, save money, and earn reputation on Solana for reliable, safe rides.
+          Community-first lift-sharing for rural Ireland — connect drivers and passengers on the same route, reduce
+          solo journeys, and earn on-chain reputation on Solana for reliable, safer rides.
         </p>
 
         <div className="flex gap-4">
