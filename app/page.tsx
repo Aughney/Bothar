@@ -84,6 +84,54 @@ export default function Home() {
             are rewarded and build on-chain reputation, while passengers gain safer, more reliable options.
           </p>
 
+          {/* Infographic: public transport scarcity */}
+          <div className="mt-6 p-4 bg-[rgba(255,255,255,0.02)] rounded">
+            <h3 className="text-lg font-semibold text-[var(--color-cream)]">Public transport is sparse in many rural areas</h3>
+            <p className="text-[var(--color-cream)]/80 mt-2">Many communities have infrequent buses and limited train routes — making car-sharing a practical necessity.</p>
+
+            <div className="mt-4 space-y-4">
+              <div className="flex items-center gap-4">
+                {/* Bus row */}
+                <svg viewBox="0 0 24 24" className="h-6 w-6 text-[var(--color-cream)]" aria-hidden>
+                  <rect x="2" y="6" width="20" height="10" rx="2" stroke="currentColor" fill="none" strokeWidth="1" />
+                  <circle cx="7" cy="17" r="1" fill="currentColor" />
+                  <circle cx="17" cy="17" r="1" fill="currentColor" />
+                </svg>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between text-[var(--color-cream)]/90">
+                    <span>Bus services</span>
+                    <span className="text-sm">Infrequent</span>
+                  </div>
+                  <svg viewBox="0 0 100 10" className="w-full mt-2 h-2" role="img" aria-label="Bus service availability">
+                    <rect x="0" y="0" width="100" height="10" rx="2" fill="rgba(255,255,255,0.08)" />
+                    <rect x="0" y="0" width="28" height="10" rx="2" fill="var(--color-cream)" opacity="0.9" />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                {/* Train row */}
+                <svg viewBox="0 0 24 24" className="h-6 w-6 text-[var(--color-cream)]" aria-hidden>
+                  <rect x="3" y="7" width="18" height="8" rx="1" stroke="currentColor" fill="none" strokeWidth="1" />
+                  <path d="M6 15v2" stroke="currentColor" strokeWidth="1" />
+                  <path d="M18 15v2" stroke="currentColor" strokeWidth="1" />
+                </svg>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between text-[var(--color-cream)]/90">
+                    <span>Train routes</span>
+                    <span className="text-sm">Limited</span>
+                  </div>
+                  <svg viewBox="0 0 100 10" className="w-full mt-2 h-2" role="img" aria-label="Train route availability">
+                    <rect x="0" y="0" width="100" height="10" rx="2" fill="rgba(255,255,255,0.08)" />
+                    <rect x="0" y="0" width="18" height="10" rx="2" fill="var(--color-cream)" opacity="0.9" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs mt-3 text-[var(--color-cream)]/70">Illustrative: check local timetables for exact service levels.</p>
+          </div>
+
           <ul className="mt-4 list-disc pl-5 text-[var(--color-cream)]/90 space-y-2">
             <li>Lower commuting costs and less congestion for rural communities.</li>
             <li>Reward good driving behaviour with on-chain reputation on Solana.</li>
