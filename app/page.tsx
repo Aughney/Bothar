@@ -163,13 +163,14 @@ export default function Home() {
 
             <li className="flex items-start gap-3">
               <svg className="h-6 w-6 flex-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1" fill="none" />
-                <path d="M8 12h8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                <path d="M12 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M3 12h18" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M6 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                <path d="M18 8v8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
               </svg>
               <div>
-                <strong className="block text-[var(--color-cream)]">Earn in crypto — get rewarded for being economic</strong>
-                Choose to share rides and earn small on-chain rewards or priority in matching for reducing solo trips.
+                <strong className="block text-[var(--color-cream)]">Get paid in escrow — secure payments and rewards</strong>
+                Fares are held in on-chain escrow until trips complete, protecting passengers and drivers. Reliable
+                behaviour also earns small on-chain rewards tied to reputation, paid securely via the same system.
               </div>
             </li>
 
