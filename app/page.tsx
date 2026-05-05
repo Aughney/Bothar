@@ -169,8 +169,7 @@ export default function Home() {
               </svg>
               <div>
                 <strong className="block text-[var(--color-cream)]">Get paid in escrow — secure payments and rewards</strong>
-                Fares are held in on-chain escrow until trips complete, protecting passengers and drivers. Reliable
-                behaviour also earns small on-chain rewards tied to reputation, paid securely via the same system.
+                Fares are held in on-chain escrow until trips complete, protecting passengers and drivers.
               </div>
             </li>
 
