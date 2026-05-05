@@ -129,7 +129,7 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="text-xs mt-3 text-[var(--color-cream)]/70">Illustrative: check local timetables for exact service levels.</p>
+            
           </div>
 
           <ul className="mt-4 list-disc pl-5 text-[var(--color-cream)]/90 space-y-2">
