@@ -138,6 +138,12 @@ export default function Home() {
             are rewarded and build on-chain reputation, while passengers gain safer, more reliable options.
           </p>
 
+          <p className="mt-4 text-[var(--color-cream)]/90">
+            Lack of reliable transport also affects personal safety — many women in rural areas report feeling unsafe
+            travelling alone because there are no dependable options. Bóthar aims to expand safe, community-driven
+            alternatives by connecting people on the same route and surfacing trusted, reputation-backed drivers.
+          </p>
+
           {/* Infographic: public transport scarcity */}
           <div className="mt-6 p-4 bg-[rgba(255,255,255,0.02)] rounded">
             <h3 className="text-lg font-semibold text-[var(--color-cream)]">Public transport is sparse in many rural areas</h3>
