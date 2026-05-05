@@ -58,43 +58,6 @@ export default function Home() {
             <li>Community-first: privacy-respecting, not commercial taxi service.</li>
           </ul>
         </article>
-
-        <div className="mt-8 flex items-center gap-6">
-          <div className="flex items-center gap-4 text-[var(--color-cream)]/90">
-            <span className="text-sm uppercase tracking-wide">Powered by</span>
-            <div className="flex items-center gap-4">
-              <span className="inline-block">
-                {/* Solana logo */}
-                <svg viewBox="0 0 256 256" className="h-8 w-auto" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <defs>
-                    <linearGradient id="g2" x1="0" x2="1">
-                      <stop offset="0" stopColor="#00FFA3" />
-                      <stop offset="1" stopColor="#DC1FFF" />
-                    </linearGradient>
-                  </defs>
-                  <g fill="url(#g2)">
-                    <path d="M10 60 L210 10 L240 40 L40 90 Z" />
-                    <path d="M10 110 L210 60 L240 90 L40 140 Z" opacity="0.9" />
-                    <path d="M10 160 L210 110 L240 140 L40 190 Z" opacity="0.8" />
-                  </g>
-                </svg>
-              </span>
-
-              <span className="inline-flex items-center gap-2">
-                {/* Superteam simplified shamrock */}
-                <svg viewBox="0 0 64 64" className="h-8 w-auto text-[var(--color-cream)]" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <g fill="currentColor">
-                    <path d="M32 36c-6-6-12-6-12-12a6 6 0 1 1 12 0c0 4-2 4 0 12z" />
-                    <path d="M32 36c6-6 12-6 12-12a6 6 0 1 0-12 0c0 4 2 4 0 12z" />
-                    <path d="M32 36c-6 6-6 12-12 12a6 6 0 1 0 12 0c0-4 2-4 0-12z" />
-                    <path d="M32 36c6 6 6 12 12 12a6 6 0 1 1-12 0c0-4-2-4 0-12z" />
-                  </g>
-                </svg>
-                <span className="text-sm">Superteam Ireland</span>
-              </span>
-            </div>
-          </div>
-        </div>
       </section>
     </main>
   );
