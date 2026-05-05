@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { ConnectionIcon } from "./Icons";
 
 export default function Navbar() {
   return (
     <nav className="w-full border-b border-[rgba(255,255,255,0.06)]">
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4">
+          <ConnectionIcon className="h-8 w-8 text-[var(--color-cream)]" />
           <span className="font-display text-2xl tracking-[0.15em] text-[var(--foreground)]">
             Bóthar
           </span>
