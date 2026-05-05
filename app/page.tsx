@@ -33,9 +33,7 @@ export default function Home() {
           solo journeys, and earn on-chain reputation on Solana for reliable, safer rides.
         </p>
 
-        <div className="mt-4 max-w-3xl p-4 rounded bg-[rgba(255,255,255,0.02)]">
-          <p className="text-[var(--color-cream)]/95 font-semibold">We should be able to rely on our communities.</p>
-        </div>
+        
 
         {/* Large infographic: solo driving stat */}
         <section className="w-full mt-8 p-6 rounded bg-[rgba(255,255,255,0.03)] max-w-4xl flex flex-col md:flex-row items-center gap-6">
