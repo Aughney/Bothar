@@ -18,10 +18,12 @@ export default function Home() {
             </svg>
           </div>
 
-          <h1 className="font-display text-6xl tracking-[0.2em] sm:text-8xl md:text-9xl">
-            Bóthar
-          </h1>
-          <p className="mt-1 text-[var(--color-cream)]/85 text-lg">Irish for “road”</p>
+          <div className="flex flex-col">
+            <h1 className="font-display text-6xl tracking-[0.2em] sm:text-8xl md:text-9xl">
+              Bóthar
+            </h1>
+            <p className="mt-1 text-[var(--color-cream)]/85 text-lg">Irish for “road”</p>
+          </div>
         </div>
 
         <p className="max-w-3xl text-lg leading-relaxed text-[var(--color-cream)]/95">
