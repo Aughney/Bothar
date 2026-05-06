@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -22,13 +22,20 @@ export const metadata: Metadata = {
     "A Solana-powered lift-share network for rural communities where taxis and public transport don't exist.",
 };
 
+export const viewport: Viewport = {
+  themeColor: "#169B62",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${openSans.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${cinzel.variable} ${openSans.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
         <Providers>
           {children}
