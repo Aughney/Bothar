@@ -44,45 +44,12 @@ export default function Home() {
           </div>
 
           <div className="flex-1">
-            <p className="text-[var(--color-cream)]/90 mb-4">
-              A majority drive alone every day — that represents a large, underused network of potential shared journeys.
+<p className="text-[var(--color-cream)]/90 mb-4">
               How many of them are travelling in the same direction at the same time? Even a small overlap creates huge
               opportunity to reduce solo trips, costs and emissions.
             </p>
 
-            {/* stylised road with 10 cars, 3 highlighted as "matching" */}
-            <div className="w-full">
-              <svg viewBox="0 0 600 120" className="w-full h-24" role="img" aria-label="Illustration showing ten cars with three highlighted">
-                <defs>
-                  <style>{`.car{fill:var(--color-cream);opacity:0.85}.match{fill:var(--color-irish-green)}`}</style>
-                </defs>
 
-                {/* road background */}
-                <rect x="0" y="20" width="600" height="80" rx="8" fill="#0e5e2c" opacity="0.15" />
-                {/* lane stripe */}
-                <rect x="0" y="60" width="600" height="6" fill="rgba(255,255,255,0.08)" />
-
-                {/* ten cars spaced across the road */}
-                <g transform="translate(20,30)">
-                  ${Array.from({ length: 10 }).map((_, i) => {
-                    const x = i * 54;
-                    // mark cars 2,5,8 (0-indexed) as matches
-                    const isMatch = [1,4,7].includes(i);
-                    return `
-                      <g transform="translate(${x},0)">
-                        <rect x="0" y="6" width="36" height="18" rx="3" class="${isMatch ? 'match' : 'car'}" />
-                        <circle cx="8" cy="26" r="2" fill="rgba(0,0,0,0.6)" />
-                        <circle cx="28" cy="26" r="2" fill="rgba(0,0,0,0.6)" />
-                      </g>
-                    `;
-                  }).join('')}
-                </g>
-              </svg>
-
-              <div className="mt-2 text-sm text-[var(--color-cream)]/80">
-                Example: out of 10 nearby drivers, 3 could be travelling the same way — that’s a quick path to sharing more seats.
-              </div>
-            </div>
           </div>
         </section>
 
