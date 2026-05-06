@@ -2,8 +2,11 @@
 
 ## Current repo state
 
-- Bootstrapped: Next.js 16 + React 19 + Tailwind v4 (App Router, TypeScript, ESLint) at the repo root. Privy and `@solana/web3.js` are installed.
+- Bootstrapped: Next.js 16 + React 19 + Tailwind v4 (App Router, TypeScript, ESLint) at the repo root. Privy (`@privy-io/react-auth` v2.x) and `@solana/web3.js` are installed.
 - App entry points: `app/layout.tsx`, `app/page.tsx`, `app/providers.tsx`, `app/globals.css`.
+- Shared UI: `app/components/{Footer,Navbar,Icons}.tsx`.
+- Implemented route folders: `app/{about,how-it-works,signin,team}/`.
+- Repo-root docs/content: `README.md`, `SPECIFICATION.md`, `DESIGN.md`, `terms.md`, `AGENTS.md`.
 - Privy provider is env-gated on `NEXT_PUBLIC_PRIVY_APP_ID` (see `.env.example`); without it the app renders without Privy login.
 - `anchor/` is a placeholder directory with toolchain install + scaffold instructions; no Anchor program code exists yet.
 - No CI, no test suite, no Anchor program, no Supabase wiring yet.
@@ -19,13 +22,15 @@ Run from the repo root:
 - `npm run lint` — ESLint
 - `npm run typecheck` — `tsc --noEmit`
 
+**Required pre-merge gate:** `npm run build` must pass. Lint and typecheck alone do **not** catch Next.js 16 static-prerender errors (e.g. an unbounded `useSearchParams()` failing the static export). Always run `npm run build` before claiming a UI change is done.
+
 Anchor commands are **not** yet runnable on this machine (Rust / Solana CLI / Anchor are not installed). See `anchor/README.md` for install + scaffold steps. Solana Playground (https://beta.solpg.io) is the recommended zero-install path for v1.
 
 ## Product source of truth
 
 - Treat `SPECIFICATION.md` as the detailed product/architecture source; `README.md` is only the short project overview.
 - `DESIGN.md` is the visual-identity source of truth (DESIGN.md format spec, https://github.com/google-labs-code/design.md). Tokens in its YAML front matter are normative — do not introduce colour, typography, spacing, or component values that contradict or duplicate them. When the UI grows, extend `DESIGN.md` first, then implement.
-- v1 target: mobile-first PWA, Next.js 15 + Tailwind, Privy embedded Solana wallets, Anchor program, Supabase off-chain trip index, Solana devnet only.
+- v1 target: mobile-first PWA, Next.js 16 + Tailwind v4, Privy embedded Solana wallets, Anchor program, Supabase off-chain trip index, Solana devnet only.
 - Native Expo/Solana Mobile Wallet Adapter is v2; do not introduce native-app work for v1 unless the spec changes.
 - Hackathon demo scope is one end-to-end devnet flow: Privy signup, post trip, second wallet accepts, fund USDC escrow, passenger confirms, driver receives USDC, both rate.
 
@@ -42,7 +47,13 @@ Anchor commands are **not** yet runnable on this machine (Rust / Solana CLI / An
 - On-chain: escrow state, reputation accounts, ratings, and verification badges.
 - Off-chain/Supabase: trip listings, origin/destination text, user nicknames, comments, and push subscriptions.
 - Anchor program scope: `init_trip`, `accept_trip`, `complete_trip`, `auto_release`, `dispute`, `resolve_dispute`, `submit_rating`, `issue_badge`, `revoke_badge`.
-- Planned routes: `/`, `/feed`, `/post`, `/trips/[id]`, `/rides`, `/u/[wallet]`, `/profile`, `/about`, `/payments`, `/terms`, `/privacy`.
+- Routes — implemented: `/`, `/about`, `/how-it-works`, `/signin`, `/team`. Planned (not yet built): `/feed`, `/post`, `/trips/[id]`, `/rides`, `/u/[wallet]`, `/profile`, `/payments`, `/terms`, `/privacy`.
+
+## Privy integration (v2.x)
+
+- The package is `@privy-io/react-auth` v2.x. There is **no `LoginButton` export** — do not import one. Trigger sign-in via the `usePrivy()` hook: `const { login, ready, authenticated, logout } = usePrivy();` and call `login()` from a button's `onClick`.
+- `usePrivy()` must be called from a component rendered inside `PrivyProvider`. `app/providers.tsx` only mounts `PrivyProvider` when `NEXT_PUBLIC_PRIVY_APP_ID` is set, so gate any Privy-hook usage behind that env check (see `app/signin/page.tsx` for the pattern).
+- Pages that use `useSearchParams()` (or any other CSR-bailout hook) must be wrapped in a `<Suspense>` boundary; otherwise `next build` fails to prerender. See `app/signin/page.tsx`.
 
 ## Local workflow notes
 
