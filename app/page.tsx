@@ -53,17 +53,17 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <a
             href="/signin?role=passenger"
-            className="inline-block bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-3 px-5 rounded"
+            className="inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-3 px-5 rounded"
           >
             I'm looking for a lift
           </a>
 
           <a
             href="/signin?role=driver"
-            className="inline-block border border-[var(--color-cream)] text-[var(--color-cream)] py-3 px-5 rounded hover:bg-[var(--color-irish-green-dark)]/20"
+            className="inline-flex justify-center border border-[var(--color-cream)] text-[var(--color-cream)] py-3 px-5 rounded hover:bg-[var(--color-irish-green-dark)]/20"
           >
             I can offer a lift
           </a>
@@ -71,7 +71,7 @@ export default function Home() {
 
         {/* On-chain reputation section */}
         <section className="w-full mt-8 p-6 rounded bg-[rgba(0,0,0,0.06)] max-w-3xl">
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col sm:flex-row items-start gap-4">
             <div className="mt-1">
               <SolanaLogo className="h-8 w-auto" />
             </div>
@@ -89,9 +89,9 @@ export default function Home() {
                 <li>Earn rewards and priority matching as your reputation grows.</li>
               </ul>
 
-              <div className="mt-4 flex gap-3">
+              <div className="mt-4 flex flex-col sm:flex-row gap-3">
                 <a href="/how-it-works" className="inline-block text-[var(--color-cream)] underline">Learn how it works</a>
-                <a href="/signin?role=driver" className="inline-block bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded">Get started</a>
+                <a href="/signin?role=driver" className="inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded">Get started</a>
               </div>
             </div>
           </div>
@@ -152,9 +152,9 @@ export default function Home() {
             </li>
           </ul>
 
-          <div className="mt-4 flex gap-3">
+          <div className="mt-4 flex flex-col sm:flex-row gap-3">
             <a href="/how-it-works" className="text-[var(--color-cream)] underline">Read safety details</a>
-            <a href="/signin?role=passenger" className="inline-block bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded">Find a safe ride</a>
+            <a href="/signin?role=passenger" className="inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded">Find a safe ride</a>
           </div>
         </section>
 
