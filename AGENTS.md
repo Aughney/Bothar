@@ -30,7 +30,7 @@ Anchor commands are **not** yet runnable on this machine (Rust / Solana CLI / An
 
 - Treat `SPECIFICATION.md` as the detailed product/architecture source; `README.md` is only the short project overview.
 - `DESIGN.md` is the visual-identity source of truth (DESIGN.md format spec, https://github.com/google-labs-code/design.md). Tokens in its YAML front matter are normative — do not introduce colour, typography, spacing, or component values that contradict or duplicate them. When the UI grows, extend `DESIGN.md` first, then implement.
-- v1 target: mobile-first PWA, Next.js 16 + Tailwind v4, Privy embedded Solana wallets, Anchor program, Supabase off-chain trip index, Solana devnet only.
+- v1 target: mobile-first PWA, Next.js 16 + Tailwind v4, Privy embedded Solana wallets, Anchor program, Vercel Postgres (Neon via Marketplace) + Vercel Blob for the off-chain trip index and private licence-image storage, Solana devnet only. Supabase Postgres + Supabase Storage are the documented backup if Vercel free-tier limits are hit.
 - Native Expo/Solana Mobile Wallet Adapter is v2; do not introduce native-app work for v1 unless the spec changes.
 - Hackathon demo scope is one end-to-end devnet flow: Privy signup, post trip, second wallet accepts, fund USDC escrow, passenger confirms, driver receives USDC, both rate.
 
@@ -45,7 +45,7 @@ Anchor commands are **not** yet runnable on this machine (Rust / Solana CLI / An
 ## Architecture constraints from the spec
 
 - On-chain: escrow state, reputation accounts, ratings, and verification badges.
-- Off-chain/Supabase: trip listings, origin/destination text, user nicknames, comments, and push subscriptions.
+- Off-chain (Postgres + private file storage): trip listings, origin/destination text, user nicknames, comments, push subscriptions, driver KYC submission metadata + verification status (Postgres), and driver licence images (Vercel Blob private store). Primary host: Vercel Marketplace; backup: Supabase. See `BACKEND.md`.
 - Anchor program scope: `init_trip`, `accept_trip`, `complete_trip`, `auto_release`, `dispute`, `resolve_dispute`, `submit_rating`, `issue_badge`, `revoke_badge`.
 - Routes — implemented: `/`, `/about`, `/how-it-works`, `/signin`, `/team`. Planned (not yet built): `/feed`, `/post`, `/trips/[id]`, `/rides`, `/u/[wallet]`, `/profile`, `/payments`, `/terms`, `/privacy`.
 

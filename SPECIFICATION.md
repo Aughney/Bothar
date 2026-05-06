@@ -156,7 +156,7 @@ Hackathon scope:
 - No third-party identity provider integration (e.g. no Stripe Identity, Onfido, Persona).
 - No automatic document authenticity checks.
 - No on-chain badge or reputation mutation when approved.
-- Verification status is stored off-chain in Supabase and enforced by the app/backend before trip acceptance.
+- Verification status is stored off-chain in the project's primary Postgres (Neon via Vercel Marketplace; Supabase as documented backup) and enforced by the app/backend before trip acceptance.
 
 Driver flow:
 
@@ -179,7 +179,7 @@ Admin flow:
 
 Privacy and storage rules:
 
-- Licence images are stored off-chain in a private Supabase Storage bucket.
+- Licence images are stored off-chain in a private Vercel Blob store (Supabase Storage as documented backup).
 - Licence images are never written on-chain, never shown publicly, and never shown to passengers.
 - Public UI may show only a simple "Driver verified" trust indicator.
 - Access to licence images is limited to the submitting driver and authorised admins via short-lived signed URLs.
@@ -253,7 +253,7 @@ Each user wallet accumulates:
 
 All four are read from on-chain accounts and displayed on profile cards.
 
-Driver licence verification is **not** part of the on-chain reputation account in v1. The "Driver verified" indicator is an app-level, off-chain status read from Supabase.
+Driver licence verification is **not** part of the on-chain reputation account in v1. The "Driver verified" indicator is an app-level, off-chain status read from the project's primary Postgres (Neon via Vercel Marketplace; Supabase as documented backup).
 
 ## 4.9 Ratings
 
@@ -387,7 +387,7 @@ Goal: onboarding to first useful screen in **under 30 seconds**, no crypto vocab
 - `id` (uuid)
 - `wallet` (driver's Privy/Solana account)
 - `status` (`Pending` / `Approved` / `Rejected`)
-- `licenceImagePath` (private Supabase Storage path)
+- `licenceImagePath` (private Vercel Blob pathname/URL; Supabase Storage path if running on the documented backup)
 - `declarationAcceptedAt`
 - `submittedAt`
 - `reviewedAt` (nullable)
@@ -400,7 +400,7 @@ No licence number, full legal name, date of birth, or extracted document fields 
 ## 7.5 Off-chain vs on-chain split
 
 - **On-chain**: escrow program state, reputation accounts, ratings, verification badges.
-- **Off-chain (Postgres / Supabase)**: trip listings (origin/destination text, search-friendly), user nicknames, comments, push subscriptions, driver licence submission metadata, and driver verification status.
+- **Off-chain (Postgres + private file storage)**: trip listings (origin/destination text, search-friendly), user nicknames, comments, push subscriptions, driver licence submission metadata, and driver verification status. Primary stack: **Neon Postgres + Vercel Blob, both via Vercel Marketplace**. Documented backup: **Supabase Postgres + Supabase Storage** (Postgres swap is one `DATABASE_URL` change; Storage swap is an SDK rename). See `BACKEND.md` for the full mapping and setup.
 - Trip ID anchors both sides: created off-chain, then referenced on-chain when escrow is funded.
 - Driver KYC status is deliberately off-chain in v1 and does not mutate Solana reputation accounts.
 
@@ -627,7 +627,7 @@ A rural lift-share network needs trustless small-value settlement, light-weight 
 
 ## Decision
 
-Build Bóthar as a **mobile-first PWA** (Next.js 15 + Tailwind), with **Privy embedded wallets** for non-crypto onboarding, an **Anchor program** for USDC escrow + reputation + verification, and **Supabase** for the off-chain trip index. Ship on **devnet** for the hackathon submission. Defer native (Expo + Solana Mobile Wallet Adapter) to v2.
+Build Bóthar as a **mobile-first PWA** (Next.js 16 + Tailwind v4), with **Privy embedded wallets** for non-crypto onboarding, an **Anchor program** for USDC escrow + reputation + verification, and **Vercel Postgres (Neon via Marketplace) + Vercel Blob** for the off-chain trip index and private licence-image storage. **Supabase Postgres + Supabase Storage** stay documented as the drop-in backup if Vercel free-tier limits are hit during the hackathon. Ship on **devnet** for the hackathon submission. Defer native (Expo + Solana Mobile Wallet Adapter) to v2.
 
 ## Consequences
 
