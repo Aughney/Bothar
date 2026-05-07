@@ -73,6 +73,15 @@ export default function Home() {
           reputation on Solana for reliable, safer rides.
         </p>
 
+        <div className="w-full max-w-3xl mb-2">
+          <Link
+            href="/signin"
+            className="inline-flex items-center justify-center rounded border border-[var(--color-cream)] px-4 py-2 text-sm font-semibold text-[var(--color-cream)] hover:bg-[var(--color-irish-green-dark)]/20"
+          >
+            Join The Waitlist
+          </Link>
+        </div>
+
         {/* Large infographic: solo driving stat */}
         <section className="w-full mt-8 p-6 rounded bg-[rgba(255,255,255,0.03)] max-w-4xl flex flex-col md:flex-row items-center gap-6">
           <div className="flex-none">
