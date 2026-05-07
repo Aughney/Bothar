@@ -1,7 +1,7 @@
 export default function HowItWorks() {
   return (
-    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex items-center justify-center">
-      <div className="max-w-4xl mx-auto p-8">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="font-display text-4xl mb-4">How it works</h1>
 
         <p className="text-[var(--color-cream)]/90 mb-6">

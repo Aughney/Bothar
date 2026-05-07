@@ -4,7 +4,7 @@ import { SolanaLogo } from "./components/Icons";
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
-      <section className="flex-1 max-w-5xl mx-auto px-6 py-12 flex flex-col items-start gap-8">
+      <section className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col items-start gap-8">
         <div className="flex items-center gap-4">
           <div className="p-2 rounded bg-[rgba(255,255,255,0.03)]">
             {/* inline connection icon */}
@@ -93,17 +93,17 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="w-full flex flex-col sm:flex-row gap-4">
           <Link
             href="/signin?role=passenger"
-            className="inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-3 px-5 rounded"
+            className="w-full sm:w-auto inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-3 px-5 rounded"
           >
             I&rsquo;m looking for a lift
           </Link>
 
           <Link
             href="/signin?role=driver"
-            className="inline-flex justify-center border border-[var(--color-cream)] text-[var(--color-cream)] py-3 px-5 rounded hover:bg-[var(--color-irish-green-dark)]/20"
+            className="w-full sm:w-auto inline-flex justify-center border border-[var(--color-cream)] text-[var(--color-cream)] py-3 px-5 rounded hover:bg-[var(--color-irish-green-dark)]/20"
           >
             I can offer a lift
           </Link>
@@ -137,16 +137,16 @@ export default function Home() {
                 </li>
               </ul>
 
-              <div className="mt-4 flex flex-col sm:flex-row gap-3">
+              <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
                 <Link
                   href="/how-it-works"
-                  className="inline-block text-[var(--color-cream)] underline"
+                  className="inline-flex items-center text-[var(--color-cream)] underline py-2 -my-2"
                 >
                   Learn how it works
                 </Link>
                 <Link
                   href="/signin?role=driver"
-                  className="inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded"
+                  className="w-full sm:w-auto inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-3 px-4 rounded"
                 >
                   Get started
                 </Link>
@@ -293,16 +293,16 @@ export default function Home() {
             </li>
           </ul>
 
-          <div className="mt-4 flex flex-col sm:flex-row gap-3">
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
             <Link
               href="/how-it-works"
-              className="text-[var(--color-cream)] underline"
+              className="inline-flex items-center text-[var(--color-cream)] underline py-2 -my-2"
             >
               Read safety details
             </Link>
             <Link
               href="/signin?role=passenger"
-              className="inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-3 rounded"
+              className="w-full sm:w-auto inline-flex justify-center bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-3 px-4 rounded"
             >
               Find a safe ride
             </Link>

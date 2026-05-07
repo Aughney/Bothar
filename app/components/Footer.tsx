@@ -4,8 +4,8 @@ import { SolanaLogo, SuperteamLogo } from "./Icons";
 export default function Footer() {
   return (
     <footer className="w-full border-t border-[rgba(255,255,255,0.04)] bg-transparent">
-      <div className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-4 text-[var(--color-cream)]/90">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[var(--color-cream)]/90">
           <div className="flex items-center gap-2">
             <SolanaLogo className="h-6 w-auto" />
             <span className="text-sm">Solana</span>
@@ -17,24 +17,27 @@ export default function Footer() {
               href="https://superteam.ie"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm hover:underline"
+              className="text-sm py-2 -my-2 hover:underline"
             >
               Superteam Ireland
             </a>
           </div>
         </div>
 
-        <div className="text-sm text-[var(--color-cream)]/70 flex items-center gap-4">
-          <Link href="/team" className="hover:underline">
+        <nav
+          aria-label="Legal"
+          className="text-sm text-[var(--color-cream)]/70 flex flex-wrap items-center gap-x-4 gap-y-1"
+        >
+          <Link href="/team" className="py-2 -my-2 hover:underline">
             Team
           </Link>
-          <Link href="/terms" className="hover:underline">
+          <Link href="/terms" className="py-2 -my-2 hover:underline">
             Terms
           </Link>
-          <Link href="/privacy" className="hover:underline">
+          <Link href="/privacy" className="py-2 -my-2 hover:underline">
             Privacy
           </Link>
-        </div>
+        </nav>
       </div>
     </footer>
   );

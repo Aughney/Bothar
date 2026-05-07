@@ -60,8 +60,8 @@ function SignInContent() {
     : "passenger";
 
   return (
-    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex items-center justify-center">
-      <div className="max-w-2xl mx-auto p-8">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="font-display text-4xl mb-4">Sign in</h1>
         <p className="mb-6 text-[var(--color-cream)]/90">
           Signing in as: <strong>{role}</strong>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function Privacy() {
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-      <article className="max-w-3xl mx-auto p-8 space-y-6 text-[var(--color-cream)]/90">
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 text-[var(--color-cream)]/90">
         <header>
           <h1 className="font-display text-4xl mb-2">Privacy Policy</h1>
           <p className="text-sm text-[var(--color-cream)]/70">

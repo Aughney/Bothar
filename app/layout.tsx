@@ -28,6 +28,10 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#169B62",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -40,7 +44,7 @@ export default function RootLayout({
       lang="en"
       className={`${cinzel.variable} ${openSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col">
         <Providers>
           <Navbar />
           {children}

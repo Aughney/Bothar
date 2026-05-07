@@ -20,12 +20,20 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="md:hidden inline-flex items-center justify-center rounded border border-[rgba(255,255,255,0.14)] px-3 py-2 text-[var(--foreground)]"
+            className="md:hidden inline-flex items-center justify-center rounded border border-[rgba(255,255,255,0.14)] h-11 w-11 text-[var(--foreground)]"
             aria-expanded={menuOpen}
             aria-label="Toggle navigation menu"
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
+            <svg
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              aria-hidden
+            >
               <path d="M4 6h16" />
               <path d="M4 12h16" />
               <path d="M4 18h16" />
@@ -34,10 +42,16 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/about" className="text-[var(--foreground)]/90 hover:text-[var(--foreground)]">
+          <Link
+            href="/about"
+            className="text-[var(--foreground)]/90 hover:text-[var(--foreground)]"
+          >
             About
           </Link>
-          <Link href="/how-it-works" className="text-[var(--foreground)]/90 hover:text-[var(--foreground)]">
+          <Link
+            href="/how-it-works"
+            className="text-[var(--foreground)]/90 hover:text-[var(--foreground)]"
+          >
             How it works
           </Link>
 
@@ -59,18 +73,26 @@ export default function Navbar() {
         </div>
 
         {menuOpen ? (
-          <div className="md:hidden flex flex-col gap-3 rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(0,0,0,0.08)] p-4">
-            <Link href="/about" className="text-[var(--foreground)]/90 hover:text-[var(--foreground)]" onClick={() => setMenuOpen(false)}>
+          <div className="md:hidden flex flex-col gap-1 rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(0,0,0,0.08)] p-4">
+            <Link
+              href="/about"
+              className="py-2 text-[var(--foreground)]/90 hover:text-[var(--foreground)]"
+              onClick={() => setMenuOpen(false)}
+            >
               About
             </Link>
-            <Link href="/how-it-works" className="text-[var(--foreground)]/90 hover:text-[var(--foreground)]" onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/how-it-works"
+              className="py-2 text-[var(--foreground)]/90 hover:text-[var(--foreground)]"
+              onClick={() => setMenuOpen(false)}
+            >
               How it works
             </Link>
 
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-3 pt-3">
               <Link
                 href="/signin?role=passenger"
-                className="inline-flex items-center justify-center gap-2 py-2 px-3 rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold"
+                className="inline-flex items-center justify-center gap-2 py-3 px-4 rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold"
                 onClick={() => setMenuOpen(false)}
               >
                 Find a lift
@@ -78,7 +100,7 @@ export default function Navbar() {
 
               <Link
                 href="/signin?role=driver"
-                className="inline-flex items-center justify-center gap-2 py-2 px-3 rounded border border-[var(--color-cream)] text-[var(--color-cream)] hover:bg-[var(--color-irish-green-dark)]/20"
+                className="inline-flex items-center justify-center gap-2 py-3 px-4 rounded border border-[var(--color-cream)] text-[var(--color-cream)] hover:bg-[var(--color-irish-green-dark)]/20"
                 onClick={() => setMenuOpen(false)}
               >
                 Offer a lift
