@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cinzel, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 const cinzel = Cinzel({
@@ -17,6 +18,9 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
   title: "Bóthar — rural lifts on Solana",
   description:
     "A Solana-powered lift-share network for rural communities where taxis and public transport don't exist.",
@@ -38,6 +42,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Providers>
+          <Navbar />
           {children}
           <Footer />
         </Providers>

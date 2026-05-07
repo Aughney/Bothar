@@ -34,7 +34,7 @@ The crypto is invisible to the user. The win is "I got home and the driver got p
 
 ## Status
 
-Pre-MVP. Bootstrapped landing page on Next.js 15 + Tailwind v4 + Privy. The substantive docs:
+Pre-MVP. Bootstrapped landing page on Next.js 16 + Tailwind v4 + Privy. The substantive docs:
 
 | File                                   | Purpose                                                                                                          |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |

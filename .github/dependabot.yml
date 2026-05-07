@@ -16,8 +16,9 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    # v3 requires config changes + Turbopack incompatibility - stay on v2 until resolved
     ignore:
+      # Stay on @privy-io/react-auth v2 — major upgrades require config + integration
+      # changes; revisit once we have time to validate the upgrade path.
       - dependency-name: "@privy-io/react-auth"
         update-types:
           - "version-update:semver-major"

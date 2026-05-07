@@ -5,7 +5,9 @@
   --color-irish-green-dark: #0e5e2c;
   --color-cream: #f7f3e9;
   --font-display: var(--font-display), serif;
-  --font-body: var(--font-body), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --font-body:
+    var(--font-body), system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
 }
 
 :root {
@@ -17,55 +19,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
-}
-
-/* Small, subtle entrance animation for hero headline */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-up {
-  animation: fadeUp 700ms cubic-bezier(.2,.9,.3,1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-up {
-    animation: none;
-  }
-  .fada-ride {
-    animation: none;
-  }
-}
-
-/* Fada (accent) ride animation: zooming left-to-right like a car */
-@keyframes fadaRide {
-  0% {
-    transform: translateX(-18px) translateY(-2px) scale(0.8) rotate(-8deg);
-    opacity: 0;
-  }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(18px) translateY(-6px) scale(1.05) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-.fada-ride {
-  display: inline-block;
-  animation: fadaRide 900ms cubic-bezier(.2,.8,.2,1) both;
-  transform-origin: center;
-}
-
-.fada {
-  font-size: 0.85em;
-  line-height: 1;
 }

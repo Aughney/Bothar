@@ -13,9 +13,14 @@ export default function Footer() {
 
           <div className="flex items-center gap-2">
             <SuperteamLogo className="h-6 w-auto text-[var(--color-cream)]" />
-            <Link href="https://superteam.ie" className="text-sm hover:underline">
+            <a
+              href="https://superteam.ie"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm hover:underline"
+            >
               Superteam Ireland
-            </Link>
+            </a>
           </div>
         </div>
 
