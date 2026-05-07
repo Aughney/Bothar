@@ -176,10 +176,16 @@ The admin check goes in a Next.js middleware or in the route handler that powers
 
 ## 8. Schema migration tool
 
-Pick one and stick with it. **Decision pending — propose to Frank before installing**:
+**Decision: Drizzle ORM** — selected for this stack: tiny, SQL-first, generates types from schema, plays nicely with Neon and serverless.
 
-- **Drizzle ORM** — recommended for this stack: tiny, SQL-first, generates types from schema, plays nicely with Neon and serverless. `npm i drizzle-orm pg && npm i -D drizzle-kit`.
-- **Prisma** — heavier, more abstractions, larger cold-start. Avoid on Hobby unless the team already knows it.
+Install:
+
+```bash
+npm i drizzle-orm pg
+npm i -D drizzle-kit
+```
+
+Configure `drizzle.config.ts` for Neon (use the connection string from `DATABASE_URL`).
 
 Initial schema (per spec §7.1, §7.4):
 
@@ -320,6 +326,5 @@ The Solana RPC (Helius), FX rate (CoinGecko), and auth (Privy) pieces are unaffe
 These need a yes/no before Niamh runs the relevant step:
 
 1. **Install `@privy-io/server-auth`?** Required for server-side JWT verification of Privy sessions. (Step 6.)
-2. **Drizzle vs. Prisma?** Recommend Drizzle for serverless cold-start and SQL-first ergonomics. (Step 8.)
-3. **`bs58` as a dev dependency** for the keypair-to-base58 one-liner — acceptable, or use `base64` instead? (Step 4.)
-4. **Cadence for `auto-release` cron** — daily (Hobby, free) vs. hourly (Pro paid)? Spec says "after 24h" so daily is compliant. (Step 9.)
+2. **`bs58` as a dev dependency** for the keypair-to-base58 one-liner — acceptable, or use `base64` instead? (Step 4.)
+3. **Cadence for `auto-release` cron** — daily (Hobby, free) vs. hourly (Pro paid)? Spec says "after 24h" so daily is compliant. (Step 9.)
