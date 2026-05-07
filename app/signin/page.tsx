@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { usePrivy } from "@privy-io/react-auth";
+import { parseRole } from "@/app/lib/roles";
 
 const HAS_PRIVY = !!process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
@@ -49,15 +50,9 @@ function PrivySignInButton() {
   );
 }
 
-const ROLES = ["passenger", "driver"] as const;
-type Role = (typeof ROLES)[number];
-
 function SignInContent() {
   const params = useSearchParams();
-  const raw = params.get("role");
-  const role: Role = (ROLES as readonly string[]).includes(raw ?? "")
-    ? (raw as Role)
-    : "passenger";
+  const role = parseRole(params.get("role"));
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
