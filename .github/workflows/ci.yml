@@ -20,6 +20,10 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Pin npm to v11 so CI lockfile resolution matches local development
+      # (v10 demands optional/peer entries that v11 leaves implicit).
+      - run: npm install -g npm@11
+
       - run: npm ci
 
       - run: npm run lint
