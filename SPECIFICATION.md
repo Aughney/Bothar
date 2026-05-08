@@ -342,6 +342,7 @@ Goal: onboarding to first useful screen in **under 30 seconds**, no crypto vocab
 | `/profile`                     | Auth                          | My profile + settings              |
 | `/profile/driver-verification` | Auth                          | Driver licence submission + status |
 | `/admin/kyc`                   | Admin only                    | Review driver licence submissions  |
+| `/waitlist`                    | Public                        | Pre-launch email signup form       |
 | `/about`                       | Public                        | How it works                       |
 | `/payments`                    | Public                        | How payments work (USDC explainer) |
 | `/terms`                       | Public                        | Terms of Service                   |

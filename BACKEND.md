@@ -250,12 +250,18 @@ create table rating_comments (
   created_at      timestamptz not null default now(),
   primary key (trip_id, rater_wallet)
 );
+
+-- waitlist: pre-launch email signups (spec §6 /waitlist)
+create table waitlist_signups (
+  email           text primary key,
+  created_at      timestamptz not null default now()
+);
 ```
 
 Apply via the chosen tool's migration command. Verify with:
 
 ```bash
-psql "$DATABASE_URL" -c "\dt"     # expect: trips, kyc_submissions, users, rating_comments
+psql "$DATABASE_URL" -c "\dt"     # expect: trips, kyc_submissions, users, rating_comments, waitlist_signups
 ```
 
 ## 9. Cron job for auto_release
