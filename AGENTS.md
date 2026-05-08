@@ -47,7 +47,7 @@ Anchor commands are **not** yet runnable on this machine (Rust / Solana CLI / An
 - On-chain: escrow state, reputation accounts, ratings, and verification badges.
 - Off-chain (Postgres + private file storage): trip listings, origin/destination text, user nicknames, comments, push subscriptions, driver KYC submission metadata + verification status (Postgres), and driver licence images (Vercel Blob private store). Primary host: Vercel Marketplace; backup: Supabase. See `BACKEND.md`.
 - Anchor program scope: `init_trip`, `accept_trip`, `complete_trip`, `auto_release`, `dispute`, `resolve_dispute`, `submit_rating`, `issue_badge`, `revoke_badge`.
-- Routes — implemented: `/`, `/about`, `/how-it-works`, `/signin`, `/team`. Planned (not yet built): `/feed`, `/post`, `/trips/[id]`, `/rides`, `/u/[wallet]`, `/profile`, `/payments`, `/terms`, `/privacy`.
+- Routes — implemented: `/`, `/about`, `/how-it-works`, `/signin`, `/team`. Planned (not yet built): `/waitlist`, `/feed`, `/post`, `/trips/[id]`, `/rides`, `/u/[wallet]`, `/profile`, `/payments`, `/terms`, `/privacy`.
 
 ## Privy integration (v2.x)
 
