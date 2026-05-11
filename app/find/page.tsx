@@ -111,14 +111,27 @@ export default function FindPage() {
     setTrips((prev) => prev.filter((t) => t.id !== id));
   }
 
+  async function handleRequestStatus(requestId: string, status: "completed" | "disputed") {
+    const res = await fetch(`/api/seat-requests/${requestId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    if (res.ok) {
+      const updated: SeatRequest = await res.json();
+      setMyRequests((prev) => prev.map((r) => (r.id === requestId ? updated : r)));
+    }
+  }
   const displayName =
     user?.email?.address ??
     (walletAddress ? walletAddress.slice(0, 8) + "…" : "Passenger");
 
   // Split requests into responded and pending
-  const acceptedRequests = myRequests.filter((r) => r.status === "accepted");
-  const declinedRequests = myRequests.filter((r) => r.status === "declined");
-  const pendingRequests  = myRequests.filter((r) => r.status === "pending");
+  const acceptedRequests  = myRequests.filter((r) => r.status === "accepted");
+  const completedRequests = myRequests.filter((r) => r.status === "completed");
+  const disputedRequests  = myRequests.filter((r) => r.status === "disputed");
+  const declinedRequests  = myRequests.filter((r) => r.status === "declined");
+  const pendingRequests   = myRequests.filter((r) => r.status === "pending");
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
@@ -151,15 +164,54 @@ export default function FindPage() {
         <EmailPromptBanner />
 
         {/* Driver responses */}
-        {(acceptedRequests.length > 0 || declinedRequests.length > 0) && (
+        {(acceptedRequests.length > 0 || completedRequests.length > 0 || disputedRequests.length > 0 || declinedRequests.length > 0) && (
           <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-[var(--color-cream)]">Driver responses</h2>
+            <h2 className="text-lg font-semibold text-[var(--color-cream)]">Your ride requests</h2>
+
+            {/* Accepted — awaiting journey completion */}
             {acceptedRequests.map((req) => {
               const ride = ridesMap[req.rideId];
               return (
-                <div key={req.id} className="rounded border border-green-700/40 bg-green-900/20 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div key={req.id} className="rounded border border-green-700/40 bg-green-900/20 px-4 py-3 flex flex-col gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-semibold text-green-300">Your seat is confirmed — payment held safely</p>
+                      {ride && (
+                        <p className="text-sm text-[var(--color-cream)]/70 mt-0.5">
+                          {ride.from} → {ride.to} on {new Date(ride.date).toLocaleDateString("en-IE", {
+                            weekday: "short", day: "numeric", month: "short",
+                          })} at {ride.time}
+                        </p>
+                      )}
+                      <p className="text-xs text-[var(--color-cream)]/40 mt-1">Once the journey is complete, confirm below to release payment to the driver.</p>
+                    </div>
+                    <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300 self-start sm:self-center shrink-0">Payment held</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleRequestStatus(req.id, "completed")}
+                      className="text-sm rounded bg-blue-600 text-white font-semibold px-3 py-1.5 hover:bg-blue-500"
+                    >
+                      Journey complete — release payment
+                    </button>
+                    <button
+                      onClick={() => handleRequestStatus(req.id, "disputed")}
+                      className="text-sm rounded border border-amber-600/50 text-amber-400 px-3 py-1.5 hover:bg-amber-900/20"
+                    >
+                      Raise a dispute
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Completed */}
+            {completedRequests.map((req) => {
+              const ride = ridesMap[req.rideId];
+              return (
+                <div key={req.id} className="rounded border border-blue-700/40 bg-blue-900/20 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-green-300">Your seat request was accepted</p>
+                    <p className="text-sm font-semibold text-blue-300">Journey complete — payment released to driver</p>
                     {ride && (
                       <p className="text-sm text-[var(--color-cream)]/70 mt-0.5">
                         {ride.from} → {ride.to} on {new Date(ride.date).toLocaleDateString("en-IE", {
@@ -168,10 +220,32 @@ export default function FindPage() {
                       </p>
                     )}
                   </div>
-                  <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300 self-start sm:self-center">Accepted</span>
+                  <span className="text-xs rounded px-2 py-0.5 bg-blue-900/40 text-blue-300 self-start sm:self-center shrink-0">Completed</span>
                 </div>
               );
             })}
+
+            {/* Disputed */}
+            {disputedRequests.map((req) => {
+              const ride = ridesMap[req.rideId];
+              return (
+                <div key={req.id} className="rounded border border-amber-700/40 bg-amber-900/10 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-semibold text-amber-300">Dispute raised — under review</p>
+                    {ride && (
+                      <p className="text-sm text-[var(--color-cream)]/70 mt-0.5">
+                        {ride.from} → {ride.to} on {new Date(ride.date).toLocaleDateString("en-IE", {
+                          weekday: "short", day: "numeric", month: "short",
+                        })} at {ride.time}
+                      </p>
+                    )}
+                  </div>
+                  <span className="text-xs rounded px-2 py-0.5 bg-amber-900/40 text-amber-300 self-start sm:self-center shrink-0">Disputed</span>
+                </div>
+              );
+            })}
+
+            {/* Declined */}
             {declinedRequests.map((req) => {
               const ride = ridesMap[req.rideId];
               return (
@@ -191,6 +265,7 @@ export default function FindPage() {
                 </div>
               );
             })}
+
             {pendingRequests.length > 0 && (
               <p className="text-sm text-[var(--color-cream)]/50">
                 {pendingRequests.length} request{pendingRequests.length !== 1 ? "s" : ""} still awaiting a driver response.

@@ -4,6 +4,8 @@ import { seatRequests, rides } from "@/app/db/schema";
 import { eq } from "drizzle-orm";
 import { sendRequestDecisionEmail } from "@/app/lib/email";
 
+const VALID_STATUSES = ["accepted", "declined", "completed", "disputed"];
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -13,8 +15,11 @@ export async function PATCH(
     const body = await req.json();
     const { status } = body;
 
-    if (!["accepted", "declined"].includes(status)) {
-      return NextResponse.json({ error: "status must be accepted or declined" }, { status: 400 });
+    if (!VALID_STATUSES.includes(status)) {
+      return NextResponse.json(
+        { error: `status must be one of: ${VALID_STATUSES.join(", ")}` },
+        { status: 400 }
+      );
     }
 
     const [row] = await getDb()
@@ -23,8 +28,8 @@ export async function PATCH(
       .where(eq(seatRequests.id, id))
       .returning();
 
-    // Email the passenger using the stored email address
-    if (row?.passengerEmail) {
+    // Only email the passenger on accept/decline decisions
+    if (["accepted", "declined"].includes(status) && row?.passengerEmail) {
       const [ride] = await getDb().select().from(rides).where(eq(rides.id, row.rideId));
       if (ride) {
         await sendRequestDecisionEmail({

@@ -37,7 +37,7 @@ export const seatRequests = pgTable("seat_requests", {
   passengerWallet:  text("passenger_wallet").notNull(),
   passengerEmail:   text("passenger_email").default(""),
   message:          text("message").default(""),
-  status:           text("status").notNull().default("pending"), // pending | accepted | declined
+  status:           text("status").notNull().default("pending"), // pending | accepted | declined | completed | disputed
   createdAt:        timestamp("created_at").notNull().defaultNow(),
 });
 

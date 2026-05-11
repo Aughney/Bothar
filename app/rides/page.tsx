@@ -57,7 +57,7 @@ export default function RidesPage() {
     if (authenticated && walletAddress) fetchRides();
   }, [authenticated, walletAddress, fetchRides]);
 
-  async function handleDecision(requestId: string, rideId: string, status: "accepted" | "declined") {
+  async function handleDecision(requestId: string, rideId: string, status: "accepted" | "declined" | "completed" | "disputed") {
     const res = await fetch(`/api/seat-requests/${requestId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -144,8 +144,10 @@ export default function RidesPage() {
     (walletAddress ? walletAddress.slice(0, 8) + "…" : "Driver");
 
   const statusBadge = (status: string) => {
-    if (status === "accepted") return <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300">Accepted</span>;
-    if (status === "declined") return <span className="text-xs rounded px-2 py-0.5 bg-red-900/40 text-red-300">Declined</span>;
+    if (status === "accepted")  return <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300">Accepted — payment held</span>;
+    if (status === "declined")  return <span className="text-xs rounded px-2 py-0.5 bg-red-900/40 text-red-300">Declined</span>;
+    if (status === "completed") return <span className="text-xs rounded px-2 py-0.5 bg-blue-900/40 text-blue-300">Completed — payment released</span>;
+    if (status === "disputed")  return <span className="text-xs rounded px-2 py-0.5 bg-amber-900/40 text-amber-300">Disputed</span>;
     return <span className="text-xs rounded px-2 py-0.5 bg-[rgba(255,255,255,0.08)] text-[var(--color-cream)]/60">Pending</span>;
   };
 
@@ -322,6 +324,22 @@ export default function RidesPage() {
                                 className="text-sm rounded border border-[rgba(255,255,255,0.14)] text-[var(--color-cream)]/70 px-3 py-1.5 hover:bg-[rgba(255,255,255,0.04)]"
                               >
                                 Decline
+                              </button>
+                            </div>
+                          )}
+                          {req.status === "accepted" && (
+                            <div className="flex gap-2 self-start sm:self-center">
+                              <button
+                                onClick={() => handleDecision(req.id, ride.id, "completed")}
+                                className="text-sm rounded bg-blue-600 text-white font-semibold px-3 py-1.5 hover:bg-blue-500"
+                              >
+                                Mark complete
+                              </button>
+                              <button
+                                onClick={() => handleDecision(req.id, ride.id, "disputed")}
+                                className="text-sm rounded border border-amber-600/50 text-amber-400 px-3 py-1.5 hover:bg-amber-900/20"
+                              >
+                                Dispute
                               </button>
                             </div>
                           )}
