@@ -5,14 +5,20 @@ import { eq, and } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   const rideId = req.nextUrl.searchParams.get("rideId");
-  if (!rideId) {
-    return NextResponse.json({ error: "rideId required" }, { status: 400 });
+  const passengerWallet = req.nextUrl.searchParams.get("passengerWallet");
+
+  if (!rideId && !passengerWallet) {
+    return NextResponse.json({ error: "rideId or passengerWallet required" }, { status: 400 });
   }
   try {
     const rows = await getDb()
       .select()
       .from(seatRequests)
-      .where(eq(seatRequests.rideId, rideId));
+      .where(
+        rideId
+          ? eq(seatRequests.rideId, rideId)
+          : eq(seatRequests.passengerWallet, passengerWallet!)
+      );
     return NextResponse.json(rows);
   } catch (err) {
     console.error("GET /api/seat-requests", err);
