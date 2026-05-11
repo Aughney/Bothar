@@ -7,6 +7,17 @@ import type { Ride } from "@/app/db/schema";
 
 type RequestState = "idle" | "composing" | "submitting" | "done" | "duplicate";
 
+const FAKE_NAMES = [
+  "Seán M.", "Mary K.", "Patrick O.", "Anne-Marie D.",
+  "Liam B.", "Nuala G.", "Michael F.", "Aoife H.",
+  "Tomás W.", "Siobhan R.", "Dermot C.", "Grace M.",
+];
+
+function fakeName(rideId: string): string {
+  const idx = rideId.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % FAKE_NAMES.length;
+  return FAKE_NAMES[idx];
+}
+
 export default function FeedPage() {
   const { ready, authenticated, login, user } = usePrivy();
   const [rides, setRides] = useState<Ride[]>([]);
@@ -113,7 +124,7 @@ export default function FeedPage() {
                   {/* Driver info badge */}
                   <div className="flex items-center gap-2 rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(0,0,0,0.15)] px-3 py-2 w-fit">
                     <span className="text-sm font-semibold text-[var(--color-cream)]">
-                      {ride.driverName || "Driver"}
+                      {ride.driverName || fakeName(ride.id)}
                     </span>
                     <span className="text-amber-400 text-sm">★★★★★</span>
                     <span className="text-[var(--color-cream)]/40 text-xs">New driver</span>
