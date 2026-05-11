@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import type { Ride, SeatRequest } from "@/app/db/schema";
+import EmailPromptBanner from "@/app/components/EmailPromptBanner";
 
 const EMPTY_FORM = {
   from: "",
@@ -166,6 +167,8 @@ export default function RidesPage() {
             </button>
           )}
         </div>
+
+        <EmailPromptBanner />
 
         {/* Confirmation */}
         {confirmMessage && (

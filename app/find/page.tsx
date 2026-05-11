@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import type { Trip, SeatRequest, Ride } from "@/app/db/schema";
+import EmailPromptBanner from "@/app/components/EmailPromptBanner";
 
 const EMPTY_FORM = { from: "", to: "", date: "", time: "", note: "" };
 
@@ -146,6 +147,8 @@ export default function FindPage() {
             )}
           </div>
         </div>
+
+        <EmailPromptBanner />
 
         {/* Driver responses */}
         {(acceptedRequests.length > 0 || declinedRequests.length > 0) && (
