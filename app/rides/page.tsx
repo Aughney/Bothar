@@ -22,6 +22,7 @@ export default function RidesPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<typeof EMPTY_FORM>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
 
   const walletAddress = user?.wallet?.address;
 
@@ -97,6 +98,7 @@ export default function RidesPage() {
         setForm(EMPTY_FORM);
         setErrors({});
         setShowForm(false);
+        setConfirmMessage("Journey added. You can view it in your list.");
       }
     } finally {
       setSubmitting(false);
@@ -115,6 +117,12 @@ export default function RidesPage() {
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 flex flex-col gap-8">
+
+        {confirmMessage ? (
+          <div className="rounded border border-[rgba(255,255,255,0.14)] bg-[rgba(0,0,0,0.12)] px-4 py-3 text-[var(--color-cream)]/90">
+            {confirmMessage}
+          </div>
+        ) : null}
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
