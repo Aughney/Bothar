@@ -110,14 +110,18 @@ export default function FeedPage() {
                   key={ride.id}
                   className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-5 flex flex-col gap-4"
                 >
-                  {/* Ride details */}
+                  {/* Driver info badge */}
+                  <div className="flex items-center gap-2 rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(0,0,0,0.15)] px-3 py-2 w-fit">
+                    <span className="text-sm font-semibold text-[var(--color-cream)]">
+                      {ride.driverName || "Driver"}
+                    </span>
+                    <span className="text-amber-400 text-sm">★★★★★</span>
+                    <span className="text-[var(--color-cream)]/40 text-xs">New driver</span>
+                  </div>
+
+                  {/* Route + details */}
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="flex flex-col gap-1">
-                      {ride.driverName && (
-                        <p className="text-sm font-semibold text-[var(--color-cream)]">
-                          {ride.driverName} · <span className="text-amber-400">★★★★★</span> <span className="text-[var(--color-cream)]/40 text-xs">New driver</span>
-                        </p>
-                      )}
                       <p className="font-semibold text-[var(--color-cream)] text-lg">
                         {ride.from} → {ride.to}
                       </p>
