@@ -15,6 +15,9 @@ function PrivySignInButton({ role }: { role: string }) {
     if (authenticated && role === "driver") {
       router.push("/rides");
     }
+    if (authenticated && role === "passenger") {
+      router.push("/find");
+    }
   }, [authenticated, role, router]);
 
   if (!ready) {
