@@ -3,6 +3,23 @@ import { getDb } from "@/app/db";
 import { seatRequests } from "@/app/db/schema";
 import { eq, and } from "drizzle-orm";
 
+export async function GET(req: NextRequest) {
+  const rideId = req.nextUrl.searchParams.get("rideId");
+  if (!rideId) {
+    return NextResponse.json({ error: "rideId required" }, { status: 400 });
+  }
+  try {
+    const rows = await getDb()
+      .select()
+      .from(seatRequests)
+      .where(eq(seatRequests.rideId, rideId));
+    return NextResponse.json(rows);
+  } catch (err) {
+    console.error("GET /api/seat-requests", err);
+    return NextResponse.json({ error: "db error" }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
