@@ -4,6 +4,7 @@ export const rides = pgTable("rides", {
   id:           uuid("id").primaryKey().defaultRandom(),
   driverWallet: text("driver_wallet").notNull(),
   driverEmail:  text("driver_email").default(""),
+  driverName:   text("driver_name").default(""),
   from:         text("from").notNull(),
   to:           text("to").notNull(),
   date:         text("date").notNull(),

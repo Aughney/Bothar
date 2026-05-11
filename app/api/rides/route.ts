@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { driverWallet, driverEmail, from, to, date, time, seats, note } = body;
+    const { driverWallet, driverEmail, driverName, from, to, date, time, seats, note } = body;
 
     if (!driverWallet || !from || !to || !date || !time) {
       return NextResponse.json({ error: "missing required fields" }, { status: 400 });
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     const [row] = await getDb()
       .insert(rides)
-      .values({ driverWallet, driverEmail: driverEmail ?? "", from, to, date, time, seats: Number(seats) || 1, note: note ?? "" })
+      .values({ driverWallet, driverEmail: driverEmail ?? "", driverName: driverName ?? "", from, to, date, time, seats: Number(seats) || 1, note: note ?? "" })
       .returning();
 
     return NextResponse.json(row, { status: 201 });

@@ -7,6 +7,7 @@ import type { Ride, SeatRequest } from "@/app/db/schema";
 import EmailPromptBanner from "@/app/components/EmailPromptBanner";
 
 const EMPTY_FORM = {
+  driverName: "",
   from: "",
   to: "",
   date: "",
@@ -182,6 +183,12 @@ export default function RidesPage() {
           <section className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6">
             <h2 className="text-xl font-semibold text-[var(--color-cream)] mb-5">New ride</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[var(--color-cream)]/80">Your name</label>
+                <input type="text" placeholder="e.g. Mary" value={form.driverName}
+                  onChange={(e) => setForm((f) => ({ ...f, driverName: e.target.value }))}
+                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50" />
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
                   <label className="text-sm text-[var(--color-cream)]/80">From</label>
@@ -260,9 +267,14 @@ export default function RidesPage() {
                 <li key={ride.id} className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] overflow-hidden">
 
                   {/* Ride summary */}
-                  <div className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="p-5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="flex flex-col gap-1">
                       <p className="font-semibold text-[var(--color-cream)] text-lg">{ride.from} → {ride.to}</p>
+                      {ride.driverName && (
+                        <p className="text-sm text-[var(--color-cream)]/70">
+                          {ride.driverName} · <span className="text-amber-400">★★★★★</span> <span className="text-[var(--color-cream)]/40 text-xs">New driver</span>
+                        </p>
+                      )}
                       <p className="text-sm text-[var(--color-cream)]/70">
                         {new Date(ride.date).toLocaleDateString("en-IE", {
                           weekday: "short", day: "numeric", month: "short", year: "numeric",
