@@ -67,3 +67,4 @@ Thumbs.db
 .opencode.*
 .sisyphus/
 .claude/
+.env*.local
