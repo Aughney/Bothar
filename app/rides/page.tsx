@@ -1,18 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
-
-type Ride = {
-  id: string;
-  from: string;
-  to: string;
-  date: string;
-  time: string;
-  seats: number;
-  note: string;
-};
+import type { Ride } from "@/app/db/schema";
 
 const EMPTY_FORM = {
   from: "",
@@ -26,9 +17,29 @@ const EMPTY_FORM = {
 export default function RidesPage() {
   const { ready, authenticated, login, user } = usePrivy();
   const [rides, setRides] = useState<Ride[]>([]);
+  const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<typeof EMPTY_FORM>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const walletAddress = user?.wallet?.address;
+
+  /* ── fetch rides from API ── */
+  const fetchRides = useCallback(async () => {
+    if (!walletAddress) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/rides?wallet=${encodeURIComponent(walletAddress)}`);
+      if (res.ok) setRides(await res.json());
+    } finally {
+      setLoading(false);
+    }
+  }, [walletAddress]);
+
+  useEffect(() => {
+    if (authenticated && walletAddress) fetchRides();
+  }, [authenticated, walletAddress, fetchRides]);
 
   /* ── auth gate ── */
   if (!ready) {
@@ -69,22 +80,37 @@ export default function RidesPage() {
     return e;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
-    setRides((prev) => [
-      ...prev,
-      { ...form, id: crypto.randomUUID() },
-    ]);
-    setForm(EMPTY_FORM);
-    setErrors({});
-    setShowForm(false);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/rides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, driverWallet: walletAddress }),
+      });
+      if (res.ok) {
+        const newRide: Ride = await res.json();
+        setRides((prev) => [...prev, newRide]);
+        setForm(EMPTY_FORM);
+        setErrors({});
+        setShowForm(false);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleRemove(id: string) {
+    await fetch(`/api/rides/${id}`, { method: "DELETE" });
+    setRides((prev) => prev.filter((r) => r.id !== id));
   }
 
   const displayName =
     user?.email?.address ??
-    (user?.wallet?.address ? user.wallet.address.slice(0, 8) + "…" : "Driver");
+    (walletAddress ? walletAddress.slice(0, 8) + "…" : "Driver");
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
@@ -175,7 +201,9 @@ export default function RidesPage() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-cream)]/80">Note <span className="text-[var(--color-cream)]/40">(optional)</span></label>
+                <label className="text-sm text-[var(--color-cream)]/80">
+                  Note <span className="text-[var(--color-cream)]/40">(optional)</span>
+                </label>
                 <textarea
                   rows={2}
                   placeholder="e.g. Leaving at 8am sharp, can drop at bus station"
@@ -188,9 +216,10 @@ export default function RidesPage() {
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="submit"
-                  className="inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5"
+                  disabled={submitting}
+                  className="inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5 disabled:opacity-60"
                 >
-                  Add ride
+                  {submitting ? "Saving…" : "Add ride"}
                 </button>
                 <button
                   type="button"
@@ -205,7 +234,9 @@ export default function RidesPage() {
         )}
 
         {/* Ride list */}
-        {rides.length === 0 && !showForm ? (
+        {loading ? (
+          <p className="text-[var(--color-cream)]/50 text-sm">Loading rides…</p>
+        ) : rides.length === 0 && !showForm ? (
           <div className="rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-8 text-center">
             <p className="text-[var(--color-cream)]/60">You haven&rsquo;t offered any rides yet.</p>
             <button
@@ -227,13 +258,19 @@ export default function RidesPage() {
                     {ride.from} → {ride.to}
                   </p>
                   <p className="text-sm text-[var(--color-cream)]/70">
-                    {new Date(ride.date).toLocaleDateString("en-IE", { weekday: "short", day: "numeric", month: "short", year: "numeric" })} at {ride.time}
+                    {new Date(ride.date).toLocaleDateString("en-IE", {
+                      weekday: "short", day: "numeric", month: "short", year: "numeric",
+                    })} at {ride.time}
                   </p>
-                  <p className="text-sm text-[var(--color-cream)]/70">{ride.seats} seat{ride.seats !== 1 ? "s" : ""} available</p>
-                  {ride.note && <p className="text-sm text-[var(--color-cream)]/60 italic">{ride.note}</p>}
+                  <p className="text-sm text-[var(--color-cream)]/70">
+                    {ride.seats} seat{ride.seats !== 1 ? "s" : ""} available
+                  </p>
+                  {ride.note && (
+                    <p className="text-sm text-[var(--color-cream)]/60 italic">{ride.note}</p>
+                  )}
                 </div>
                 <button
-                  onClick={() => setRides((prev) => prev.filter((r) => r.id !== ride.id))}
+                  onClick={() => handleRemove(ride.id)}
                   className="self-start sm:self-center text-sm text-[var(--color-cream)]/50 hover:text-red-400 border border-[rgba(255,255,255,0.1)] rounded px-3 py-1"
                 >
                   Remove
