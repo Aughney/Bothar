@@ -26,6 +26,7 @@ export default function RidesPage() {
   const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
 
   const walletAddress = user?.wallet?.address;
+  const driverEmail = user?.email?.address ?? "";
 
   const fetchRides = useCallback(async () => {
     if (!walletAddress) return;
@@ -114,7 +115,7 @@ export default function RidesPage() {
       const res = await fetch("/api/rides", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, driverWallet: walletAddress }),
+        body: JSON.stringify({ ...form, driverWallet: walletAddress, driverEmail }),
       });
       if (res.ok) {
         const newRide: Ride = await res.json();

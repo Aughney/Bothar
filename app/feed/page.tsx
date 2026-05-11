@@ -17,6 +17,7 @@ export default function FeedPage() {
   const [messages, setMessages] = useState<Record<string, string>>({});
 
   const walletAddress = user?.wallet?.address;
+  const passengerEmail = user?.email?.address ?? "";
 
   useEffect(() => {
     async function load() {
@@ -35,7 +36,7 @@ export default function FeedPage() {
     setRequestState((prev) => ({ ...prev, [rideId]: state }));
   }
 
-  async function handleRequest(rideId: string) {
+  async function handleRequest(rideId: string, driverEmail: string) {
     if (!walletAddress) { login(); return; }
     setRideState(rideId, "submitting");
     try {
@@ -45,6 +46,8 @@ export default function FeedPage() {
         body: JSON.stringify({
           rideId,
           passengerWallet: walletAddress,
+          passengerEmail,
+          driverEmail,
           message: messages[rideId] ?? "",
         }),
       });
@@ -171,7 +174,7 @@ export default function FeedPage() {
                       />
                       <div className="flex gap-3">
                         <button
-                          onClick={() => handleRequest(ride.id)}
+                          onClick={() => handleRequest(ride.id, ride.driverEmail ?? "")}
                           disabled={state === "submitting"}
                           className="inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-4 text-sm disabled:opacity-60"
                         >

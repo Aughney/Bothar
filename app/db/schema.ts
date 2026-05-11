@@ -3,6 +3,7 @@ import { pgTable, text, integer, timestamp, uuid } from "drizzle-orm/pg-core";
 export const rides = pgTable("rides", {
   id:           uuid("id").primaryKey().defaultRandom(),
   driverWallet: text("driver_wallet").notNull(),
+  driverEmail:  text("driver_email").default(""),
   from:         text("from").notNull(),
   to:           text("to").notNull(),
   date:         text("date").notNull(),
@@ -33,6 +34,7 @@ export const seatRequests = pgTable("seat_requests", {
   id:               uuid("id").primaryKey().defaultRandom(),
   rideId:           uuid("ride_id").notNull().references(() => rides.id, { onDelete: "cascade" }),
   passengerWallet:  text("passenger_wallet").notNull(),
+  passengerEmail:   text("passenger_email").default(""),
   message:          text("message").default(""),
   status:           text("status").notNull().default("pending"), // pending | accepted | declined
   createdAt:        timestamp("created_at").notNull().defaultNow(),
