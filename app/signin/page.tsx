@@ -1,14 +1,21 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense, useEffect } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { parseRole } from "@/app/lib/roles";
 
 const HAS_PRIVY = !!process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
-function PrivySignInButton() {
+function PrivySignInButton({ role }: { role: string }) {
   const { login, ready, authenticated, user, logout } = usePrivy();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authenticated && role === "driver") {
+      router.push("/rides");
+    }
+  }, [authenticated, role, router]);
 
   if (!ready) {
     return (
@@ -30,6 +37,7 @@ function PrivySignInButton() {
             {user?.email?.address ?? user?.wallet?.address ?? "user"}
           </strong>
         </p>
+        <p className="text-[var(--color-cream)]/70 text-sm">Redirecting…</p>
         <button
           onClick={() => logout()}
           className="w-full py-3 rounded border border-[var(--color-cream)] text-[var(--color-cream)]"
@@ -64,7 +72,7 @@ function SignInContent() {
 
         <div className="space-y-4">
           {HAS_PRIVY ? (
-            <PrivySignInButton />
+            <PrivySignInButton role={role} />
           ) : (
             <div className="rounded border border-[rgba(255,255,255,0.14)] bg-[rgba(0,0,0,0.08)] p-4 text-sm text-[var(--color-cream)]/90">
               <p className="font-semibold mb-1">Sign-in not configured</p>
