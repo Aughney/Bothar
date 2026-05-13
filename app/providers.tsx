@@ -1,11 +1,8 @@
 "use client";
 
 import { PrivyProvider } from "@privy-io/react-auth";
-import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
-
-const solanaConnectors = toSolanaWalletConnectors({ shouldAutoConnect: false });
 
 export function Providers({ children }: { children: React.ReactNode }) {
   if (!PRIVY_APP_ID) {
@@ -31,11 +28,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
         embeddedWallets: {
           solana: { createOnLogin: "users-without-wallets" },
-        },
-        externalWallets: {
-          solana: {
-            connectors: solanaConnectors,
-          },
         },
       }}
     >
