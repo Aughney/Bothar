@@ -48,8 +48,8 @@ export default function RidesManager() {
 
   const fetchRides = useCallback(async () => {
     try {
-      setFeedback(null);
       const headers = await getAuthorizationHeader();
+      setFeedback(null);
       const response = await fetch("/api/rides", { headers });
 
       if (!response.ok) {
@@ -68,12 +68,8 @@ export default function RidesManager() {
   }, [getAuthorizationHeader]);
 
   useEffect(() => {
-    if (!authenticated) {
-      setRides(null);
-      return;
-    }
-
-    void fetchRides();
+    if (!authenticated) return;
+    void Promise.resolve().then(fetchRides);
   }, [authenticated, fetchRides]);
 
   function validate() {
