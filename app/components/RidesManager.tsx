@@ -68,7 +68,11 @@ export default function RidesManager() {
   }, [getAuthorizationHeader]);
 
   useEffect(() => {
-    if (!authenticated) return;
+    if (!authenticated) {
+      setRides(null);
+      return;
+    }
+
     void fetchRides();
   }, [authenticated, fetchRides]);
 
