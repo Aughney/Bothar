@@ -34,7 +34,7 @@ The crypto is invisible to the user. The win is "I got home and the driver got p
 
 ## Status
 
-Pre-MVP. Working landing page, `/rides` driver management (Privy auth, Postgres-backed), and all static content pages on Next.js 16 + Tailwind v4 + Privy. The substantive docs:
+Pre-MVP. Working landing page, `/rides` driver management (Privy auth, Postgres-backed), and static content pages (`/about`, `/how-it-works`, `/terms`, `/privacy`) on Next.js 16 + Tailwind v4 + Privy. The `/waitlist` page is still planned and not yet implemented. The substantive docs:
 
 | File                                   | Purpose                                                                                                          |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
