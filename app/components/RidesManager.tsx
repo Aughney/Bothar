@@ -69,14 +69,7 @@ export default function RidesManager() {
 
   useEffect(() => {
     if (!authenticated) return;
-
-    const timeoutId = window.setTimeout(() => {
-      void fetchRides();
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
+    void fetchRides();
   }, [authenticated, fetchRides]);
 
   function validate() {
