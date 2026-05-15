@@ -13,7 +13,7 @@ export default function FindPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [myRequests, setMyRequests] = useState<SeatRequest[]>([]);
   const [ridesMap, setRidesMap] = useState<Record<string, Ride>>({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<typeof EMPTY_FORM>>({});
@@ -24,11 +24,12 @@ export default function FindPage() {
 
   const fetchAll = useCallback(async () => {
     if (!walletAddress) return;
-    setLoading(true);
     try {
       const [tripsRes, requestsRes, allRidesRes] = await Promise.all([
         fetch(`/api/trips?wallet=${encodeURIComponent(walletAddress)}`),
-        fetch(`/api/seat-requests?passengerWallet=${encodeURIComponent(walletAddress)}`),
+        fetch(
+          `/api/seat-requests?passengerWallet=${encodeURIComponent(walletAddress)}`,
+        ),
         fetch(`/api/rides/all`),
       ]);
       if (tripsRes.ok) setTrips(await tripsRes.json());
@@ -68,7 +69,12 @@ export default function FindPage() {
         >
           Sign in
         </button>
-        <Link href="/" className="text-sm text-[var(--color-cream)]/60 underline">Back to home</Link>
+        <Link
+          href="/"
+          className="text-sm text-[var(--color-cream)]/60 underline"
+        >
+          Back to home
+        </Link>
       </main>
     );
   }
@@ -85,7 +91,10 @@ export default function FindPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await fetch("/api/trips", {
@@ -99,7 +108,9 @@ export default function FindPage() {
         setForm(EMPTY_FORM);
         setErrors({});
         setShowForm(false);
-        setConfirmMessage("Journey request posted. Drivers on your route will be able to see it.");
+        setConfirmMessage(
+          "Journey request posted. Drivers on your route will be able to see it.",
+        );
       }
     } finally {
       setSubmitting(false);
@@ -111,7 +122,10 @@ export default function FindPage() {
     setTrips((prev) => prev.filter((t) => t.id !== id));
   }
 
-  async function handleRequestStatus(requestId: string, status: "completed" | "disputed") {
+  async function handleRequestStatus(
+    requestId: string,
+    status: "completed" | "disputed",
+  ) {
     const res = await fetch(`/api/seat-requests/${requestId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -119,7 +133,9 @@ export default function FindPage() {
     });
     if (res.ok) {
       const updated: SeatRequest = await res.json();
-      setMyRequests((prev) => prev.map((r) => (r.id === requestId ? updated : r)));
+      setMyRequests((prev) =>
+        prev.map((r) => (r.id === requestId ? updated : r)),
+      );
     }
   }
   const displayName =
@@ -127,21 +143,24 @@ export default function FindPage() {
     (walletAddress ? walletAddress.slice(0, 8) + "…" : "Passenger");
 
   // Split requests into responded and pending
-  const acceptedRequests  = myRequests.filter((r) => r.status === "accepted");
+  const acceptedRequests = myRequests.filter((r) => r.status === "accepted");
   const completedRequests = myRequests.filter((r) => r.status === "completed");
-  const disputedRequests  = myRequests.filter((r) => r.status === "disputed");
-  const declinedRequests  = myRequests.filter((r) => r.status === "declined");
-  const pendingRequests   = myRequests.filter((r) => r.status === "pending");
+  const disputedRequests = myRequests.filter((r) => r.status === "disputed");
+  const declinedRequests = myRequests.filter((r) => r.status === "declined");
+  const pendingRequests = myRequests.filter((r) => r.status === "pending");
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 flex flex-col gap-8">
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="font-display text-4xl tracking-[0.15em]">Find a Lift</h1>
-            <p className="mt-1 text-[var(--color-cream)]/70 text-sm">Signed in as {displayName}</p>
+            <h1 className="font-display text-4xl tracking-[0.15em]">
+              Find a Lift
+            </h1>
+            <p className="mt-1 text-[var(--color-cream)]/70 text-sm">
+              Signed in as {displayName}
+            </p>
           </div>
           <div className="flex gap-3">
             <Link
@@ -164,28 +183,47 @@ export default function FindPage() {
         <EmailPromptBanner />
 
         {/* Driver responses */}
-        {(acceptedRequests.length > 0 || completedRequests.length > 0 || disputedRequests.length > 0 || declinedRequests.length > 0) && (
+        {(acceptedRequests.length > 0 ||
+          completedRequests.length > 0 ||
+          disputedRequests.length > 0 ||
+          declinedRequests.length > 0) && (
           <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-[var(--color-cream)]">Your ride requests</h2>
+            <h2 className="text-lg font-semibold text-[var(--color-cream)]">
+              Your ride requests
+            </h2>
 
             {/* Accepted — awaiting journey completion */}
             {acceptedRequests.map((req) => {
               const ride = ridesMap[req.rideId];
               return (
-                <div key={req.id} className="rounded border border-green-700/40 bg-green-900/20 px-4 py-3 flex flex-col gap-3">
+                <div
+                  key={req.id}
+                  className="rounded border border-green-700/40 bg-green-900/20 px-4 py-3 flex flex-col gap-3"
+                >
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold text-green-300">Your seat is confirmed — payment held safely</p>
+                      <p className="text-sm font-semibold text-green-300">
+                        Your seat is confirmed — payment held safely
+                      </p>
                       {ride && (
                         <p className="text-sm text-[var(--color-cream)]/70 mt-0.5">
-                          {ride.from} → {ride.to} on {new Date(ride.date).toLocaleDateString("en-IE", {
-                            weekday: "short", day: "numeric", month: "short",
-                          })} at {ride.time}
+                          {ride.from} → {ride.to} on{" "}
+                          {new Date(ride.date).toLocaleDateString("en-IE", {
+                            weekday: "short",
+                            day: "numeric",
+                            month: "short",
+                          })}{" "}
+                          at {ride.time}
                         </p>
                       )}
-                      <p className="text-xs text-[var(--color-cream)]/40 mt-1">Once the journey is complete, confirm below to release payment to the driver.</p>
+                      <p className="text-xs text-[var(--color-cream)]/40 mt-1">
+                        Once the journey is complete, confirm below to release
+                        payment to the driver.
+                      </p>
                     </div>
-                    <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300 self-start sm:self-center shrink-0">Payment held</span>
+                    <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300 self-start sm:self-center shrink-0">
+                      Payment held
+                    </span>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -209,18 +247,29 @@ export default function FindPage() {
             {completedRequests.map((req) => {
               const ride = ridesMap[req.rideId];
               return (
-                <div key={req.id} className="rounded border border-blue-700/40 bg-blue-900/20 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div
+                  key={req.id}
+                  className="rounded border border-blue-700/40 bg-blue-900/20 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+                >
                   <div>
-                    <p className="text-sm font-semibold text-blue-300">Journey complete — payment released to driver</p>
+                    <p className="text-sm font-semibold text-blue-300">
+                      Journey complete — payment released to driver
+                    </p>
                     {ride && (
                       <p className="text-sm text-[var(--color-cream)]/70 mt-0.5">
-                        {ride.from} → {ride.to} on {new Date(ride.date).toLocaleDateString("en-IE", {
-                          weekday: "short", day: "numeric", month: "short",
-                        })} at {ride.time}
+                        {ride.from} → {ride.to} on{" "}
+                        {new Date(ride.date).toLocaleDateString("en-IE", {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                        })}{" "}
+                        at {ride.time}
                       </p>
                     )}
                   </div>
-                  <span className="text-xs rounded px-2 py-0.5 bg-blue-900/40 text-blue-300 self-start sm:self-center shrink-0">Completed</span>
+                  <span className="text-xs rounded px-2 py-0.5 bg-blue-900/40 text-blue-300 self-start sm:self-center shrink-0">
+                    Completed
+                  </span>
                 </div>
               );
             })}
@@ -229,18 +278,29 @@ export default function FindPage() {
             {disputedRequests.map((req) => {
               const ride = ridesMap[req.rideId];
               return (
-                <div key={req.id} className="rounded border border-amber-700/40 bg-amber-900/10 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div
+                  key={req.id}
+                  className="rounded border border-amber-700/40 bg-amber-900/10 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+                >
                   <div>
-                    <p className="text-sm font-semibold text-amber-300">Dispute raised — under review</p>
+                    <p className="text-sm font-semibold text-amber-300">
+                      Dispute raised — under review
+                    </p>
                     {ride && (
                       <p className="text-sm text-[var(--color-cream)]/70 mt-0.5">
-                        {ride.from} → {ride.to} on {new Date(ride.date).toLocaleDateString("en-IE", {
-                          weekday: "short", day: "numeric", month: "short",
-                        })} at {ride.time}
+                        {ride.from} → {ride.to} on{" "}
+                        {new Date(ride.date).toLocaleDateString("en-IE", {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                        })}{" "}
+                        at {ride.time}
                       </p>
                     )}
                   </div>
-                  <span className="text-xs rounded px-2 py-0.5 bg-amber-900/40 text-amber-300 self-start sm:self-center shrink-0">Disputed</span>
+                  <span className="text-xs rounded px-2 py-0.5 bg-amber-900/40 text-amber-300 self-start sm:self-center shrink-0">
+                    Disputed
+                  </span>
                 </div>
               );
             })}
@@ -249,26 +309,44 @@ export default function FindPage() {
             {declinedRequests.map((req) => {
               const ride = ridesMap[req.rideId];
               return (
-                <div key={req.id} className="rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div
+                  key={req.id}
+                  className="rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+                >
                   <div>
-                    <p className="text-sm text-[var(--color-cream)]/60">Your seat request was not accepted this time.</p>
+                    <p className="text-sm text-[var(--color-cream)]/60">
+                      Your seat request was not accepted this time.
+                    </p>
                     {ride && (
                       <p className="text-sm text-[var(--color-cream)]/50 mt-0.5">
-                        {ride.from} → {ride.to} on {new Date(ride.date).toLocaleDateString("en-IE", {
-                          weekday: "short", day: "numeric", month: "short",
-                        })} at {ride.time}
+                        {ride.from} → {ride.to} on{" "}
+                        {new Date(ride.date).toLocaleDateString("en-IE", {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                        })}{" "}
+                        at {ride.time}
                       </p>
                     )}
-                    <Link href="/feed" className="text-sm text-[var(--color-cream)]/70 underline mt-1 inline-block">Browse other rides</Link>
+                    <Link
+                      href="/feed"
+                      className="text-sm text-[var(--color-cream)]/70 underline mt-1 inline-block"
+                    >
+                      Browse other rides
+                    </Link>
                   </div>
-                  <span className="text-xs rounded px-2 py-0.5 bg-[rgba(255,255,255,0.06)] text-[var(--color-cream)]/50 self-start sm:self-center">Declined</span>
+                  <span className="text-xs rounded px-2 py-0.5 bg-[rgba(255,255,255,0.06)] text-[var(--color-cream)]/50 self-start sm:self-center">
+                    Declined
+                  </span>
                 </div>
               );
             })}
 
             {pendingRequests.length > 0 && (
               <p className="text-sm text-[var(--color-cream)]/50">
-                {pendingRequests.length} request{pendingRequests.length !== 1 ? "s" : ""} still awaiting a driver response.
+                {pendingRequests.length} request
+                {pendingRequests.length !== 1 ? "s" : ""} still awaiting a
+                driver response.
               </p>
             )}
           </section>
@@ -284,56 +362,118 @@ export default function FindPage() {
         {/* Request form */}
         {showForm && (
           <section className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-cream)] mb-5">Request a lift</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+            <h2 className="text-xl font-semibold text-[var(--color-cream)] mb-5">
+              Request a lift
+            </h2>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4"
+              noValidate
+            >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">From</label>
-                  <input type="text" placeholder="e.g. Clifden" value={form.from}
-                    onChange={(e) => setForm((f) => ({ ...f, from: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.from && <p className="text-red-400 text-xs">{errors.from}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    From
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Clifden"
+                    value={form.from}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, from: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.from && (
+                    <p className="text-red-400 text-xs">{errors.from}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">To</label>
-                  <input type="text" placeholder="e.g. Galway" value={form.to}
-                    onChange={(e) => setForm((f) => ({ ...f, to: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.to && <p className="text-red-400 text-xs">{errors.to}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    To
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Galway"
+                    value={form.to}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, to: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.to && (
+                    <p className="text-red-400 text-xs">{errors.to}</p>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">Date</label>
-                  <input type="date" value={form.date}
-                    onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.date && <p className="text-red-400 text-xs">{errors.date}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    value={form.date}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, date: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.date && (
+                    <p className="text-red-400 text-xs">{errors.date}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">Time</label>
-                  <input type="time" value={form.time}
-                    onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.time && <p className="text-red-400 text-xs">{errors.time}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    Time
+                  </label>
+                  <input
+                    type="time"
+                    value={form.time}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, time: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.time && (
+                    <p className="text-red-400 text-xs">{errors.time}</p>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-[var(--color-cream)]/80">
-                  Note <span className="text-[var(--color-cream)]/40">(optional)</span>
+                  Note{" "}
+                  <span className="text-[var(--color-cream)]/40">
+                    (optional)
+                  </span>
                 </label>
-                <textarea rows={2} placeholder="e.g. I have a buggy, need space in the boot"
+                <textarea
+                  rows={2}
+                  placeholder="e.g. I have a buggy, need space in the boot"
                   value={form.note}
-                  onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
-                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50 resize-none" />
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, note: e.target.value }))
+                  }
+                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50 resize-none"
+                />
               </div>
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button type="submit" disabled={submitting}
-                  className="inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5 disabled:opacity-60">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5 disabled:opacity-60"
+                >
                   {submitting ? "Posting…" : "Post request"}
                 </button>
-                <button type="button" onClick={() => { setShowForm(false); setForm(EMPTY_FORM); setErrors({}); }}
-                  className="inline-flex justify-center rounded border border-[rgba(255,255,255,0.14)] text-[var(--color-cream)]/80 py-2 px-5 hover:bg-[rgba(255,255,255,0.04)]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForm(false);
+                    setForm(EMPTY_FORM);
+                    setErrors({});
+                  }}
+                  className="inline-flex justify-center rounded border border-[rgba(255,255,255,0.14)] text-[var(--color-cream)]/80 py-2 px-5 hover:bg-[rgba(255,255,255,0.04)]"
+                >
                   Cancel
                 </button>
               </div>
@@ -343,33 +483,53 @@ export default function FindPage() {
 
         {/* My requests */}
         <div>
-          <h2 className="text-lg font-semibold text-[var(--color-cream)] mb-4">My lift requests</h2>
+          <h2 className="text-lg font-semibold text-[var(--color-cream)] mb-4">
+            My lift requests
+          </h2>
           {loading ? (
             <p className="text-[var(--color-cream)]/50 text-sm">Loading…</p>
           ) : trips.length === 0 && !showForm ? (
             <div className="rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-8 text-center">
-              <p className="text-[var(--color-cream)]/60">You haven&rsquo;t posted any lift requests yet.</p>
-              <button onClick={() => setShowForm(true)}
-                className="mt-4 inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5">
+              <p className="text-[var(--color-cream)]/60">
+                You haven&rsquo;t posted any lift requests yet.
+              </p>
+              <button
+                onClick={() => setShowForm(true)}
+                className="mt-4 inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5"
+              >
                 Post your first request
               </button>
             </div>
           ) : (
             <ul className="flex flex-col gap-4">
               {trips.map((trip) => (
-                <li key={trip.id}
-                  className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <li
+                  key={trip.id}
+                  className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                >
                   <div className="flex flex-col gap-1">
-                    <p className="font-semibold text-[var(--color-cream)] text-lg">{trip.from} → {trip.to}</p>
+                    <p className="font-semibold text-[var(--color-cream)] text-lg">
+                      {trip.from} → {trip.to}
+                    </p>
                     <p className="text-sm text-[var(--color-cream)]/70">
                       {new Date(trip.date).toLocaleDateString("en-IE", {
-                        weekday: "short", day: "numeric", month: "short", year: "numeric",
-                      })} at {trip.time}
+                        weekday: "short",
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}{" "}
+                      at {trip.time}
                     </p>
-                    {trip.note && <p className="text-sm text-[var(--color-cream)]/60 italic">{trip.note}</p>}
+                    {trip.note && (
+                      <p className="text-sm text-[var(--color-cream)]/60 italic">
+                        {trip.note}
+                      </p>
+                    )}
                   </div>
-                  <button onClick={() => handleRemove(trip.id)}
-                    className="self-start sm:self-center text-sm text-[var(--color-cream)]/50 hover:text-red-400 border border-[rgba(255,255,255,0.1)] rounded px-3 py-1">
+                  <button
+                    onClick={() => handleRemove(trip.id)}
+                    className="self-start sm:self-center text-sm text-[var(--color-cream)]/50 hover:text-red-400 border border-[rgba(255,255,255,0.1)] rounded px-3 py-1"
+                  >
                     Remove
                   </button>
                 </li>

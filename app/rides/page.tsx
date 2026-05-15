@@ -20,7 +20,7 @@ export default function RidesPage() {
   const { ready, authenticated, login, user } = usePrivy();
   const [rides, setRides] = useState<Ride[]>([]);
   const [requests, setRequests] = useState<Record<string, SeatRequest[]>>({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<typeof EMPTY_FORM>>({});
@@ -32,9 +32,10 @@ export default function RidesPage() {
 
   const fetchRides = useCallback(async () => {
     if (!walletAddress) return;
-    setLoading(true);
     try {
-      const res = await fetch(`/api/rides?wallet=${encodeURIComponent(walletAddress)}`);
+      const res = await fetch(
+        `/api/rides?wallet=${encodeURIComponent(walletAddress)}`,
+      );
       if (!res.ok) return;
       const rows: Ride[] = await res.json();
       setRides(rows);
@@ -45,7 +46,7 @@ export default function RidesPage() {
           const r = await fetch(`/api/seat-requests?rideId=${ride.id}`);
           const reqs: SeatRequest[] = r.ok ? await r.json() : [];
           return [ride.id, reqs] as [string, SeatRequest[]];
-        })
+        }),
       );
       setRequests(Object.fromEntries(entries));
     } finally {
@@ -57,7 +58,11 @@ export default function RidesPage() {
     if (authenticated && walletAddress) fetchRides();
   }, [authenticated, walletAddress, fetchRides]);
 
-  async function handleDecision(requestId: string, rideId: string, status: "accepted" | "declined" | "completed" | "disputed") {
+  async function handleDecision(
+    requestId: string,
+    rideId: string,
+    status: "accepted" | "declined" | "completed" | "disputed",
+  ) {
     const res = await fetch(`/api/seat-requests/${requestId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -84,7 +89,9 @@ export default function RidesPage() {
   if (!authenticated) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center gap-6 bg-[var(--background)] text-[var(--foreground)] px-4">
-        <h1 className="font-display text-4xl tracking-[0.15em]">Manage Rides</h1>
+        <h1 className="font-display text-4xl tracking-[0.15em]">
+          Manage Rides
+        </h1>
         <p className="text-[var(--color-cream)]/80 text-center max-w-sm">
           Sign in as a driver to view and offer rides.
         </p>
@@ -94,7 +101,12 @@ export default function RidesPage() {
         >
           Sign in
         </button>
-        <Link href="/" className="text-sm text-[var(--color-cream)]/60 underline">Back to home</Link>
+        <Link
+          href="/"
+          className="text-sm text-[var(--color-cream)]/60 underline"
+        >
+          Back to home
+        </Link>
       </main>
     );
   }
@@ -111,13 +123,20 @@ export default function RidesPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await fetch("/api/rides", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, driverWallet: walletAddress, driverEmail }),
+        body: JSON.stringify({
+          ...form,
+          driverWallet: walletAddress,
+          driverEmail,
+        }),
       });
       if (res.ok) {
         const newRide: Ride = await res.json();
@@ -136,7 +155,11 @@ export default function RidesPage() {
   async function handleRemove(id: string) {
     await fetch(`/api/rides/${id}`, { method: "DELETE" });
     setRides((prev) => prev.filter((r) => r.id !== id));
-    setRequests((prev) => { const next = { ...prev }; delete next[id]; return next; });
+    setRequests((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
   const displayName =
@@ -144,22 +167,49 @@ export default function RidesPage() {
     (walletAddress ? walletAddress.slice(0, 8) + "…" : "Driver");
 
   const statusBadge = (status: string) => {
-    if (status === "accepted")  return <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300">Accepted — payment held</span>;
-    if (status === "declined")  return <span className="text-xs rounded px-2 py-0.5 bg-red-900/40 text-red-300">Declined</span>;
-    if (status === "completed") return <span className="text-xs rounded px-2 py-0.5 bg-blue-900/40 text-blue-300">Completed — payment released</span>;
-    if (status === "disputed")  return <span className="text-xs rounded px-2 py-0.5 bg-amber-900/40 text-amber-300">Disputed</span>;
-    return <span className="text-xs rounded px-2 py-0.5 bg-[rgba(255,255,255,0.08)] text-[var(--color-cream)]/60">Pending</span>;
+    if (status === "accepted")
+      return (
+        <span className="text-xs rounded px-2 py-0.5 bg-green-900/40 text-green-300">
+          Accepted — payment held
+        </span>
+      );
+    if (status === "declined")
+      return (
+        <span className="text-xs rounded px-2 py-0.5 bg-red-900/40 text-red-300">
+          Declined
+        </span>
+      );
+    if (status === "completed")
+      return (
+        <span className="text-xs rounded px-2 py-0.5 bg-blue-900/40 text-blue-300">
+          Completed — payment released
+        </span>
+      );
+    if (status === "disputed")
+      return (
+        <span className="text-xs rounded px-2 py-0.5 bg-amber-900/40 text-amber-300">
+          Disputed
+        </span>
+      );
+    return (
+      <span className="text-xs rounded px-2 py-0.5 bg-[rgba(255,255,255,0.08)] text-[var(--color-cream)]/60">
+        Pending
+      </span>
+    );
   };
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 flex flex-col gap-8">
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="font-display text-4xl tracking-[0.15em]">Manage Rides</h1>
-            <p className="mt-1 text-[var(--color-cream)]/70 text-sm">Signed in as {displayName}</p>
+            <h1 className="font-display text-4xl tracking-[0.15em]">
+              Manage Rides
+            </h1>
+            <p className="mt-1 text-[var(--color-cream)]/70 text-sm">
+              Signed in as {displayName}
+            </p>
           </div>
           {!showForm && (
             <button
@@ -183,65 +233,147 @@ export default function RidesPage() {
         {/* Add ride form */}
         {showForm && (
           <section className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-cream)] mb-5">New ride</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+            <h2 className="text-xl font-semibold text-[var(--color-cream)] mb-5">
+              New ride
+            </h2>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4"
+              noValidate
+            >
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-cream)]/80">Your name</label>
-                <input type="text" placeholder="e.g. Mary" value={form.driverName}
-                  onChange={(e) => setForm((f) => ({ ...f, driverName: e.target.value }))}
-                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50" />
+                <label className="text-sm text-[var(--color-cream)]/80">
+                  Your name
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Mary"
+                  value={form.driverName}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, driverName: e.target.value }))
+                  }
+                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50"
+                />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">From</label>
-                  <input type="text" placeholder="e.g. Clifden" value={form.from}
-                    onChange={(e) => setForm((f) => ({ ...f, from: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.from && <p className="text-red-400 text-xs">{errors.from}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    From
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Clifden"
+                    value={form.from}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, from: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.from && (
+                    <p className="text-red-400 text-xs">{errors.from}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">To</label>
-                  <input type="text" placeholder="e.g. Galway" value={form.to}
-                    onChange={(e) => setForm((f) => ({ ...f, to: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.to && <p className="text-red-400 text-xs">{errors.to}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    To
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Galway"
+                    value={form.to}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, to: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.to && (
+                    <p className="text-red-400 text-xs">{errors.to}</p>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">Date</label>
-                  <input type="date" value={form.date}
-                    onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.date && <p className="text-red-400 text-xs">{errors.date}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    value={form.date}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, date: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.date && (
+                    <p className="text-red-400 text-xs">{errors.date}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-[var(--color-cream)]/80">Time</label>
-                  <input type="time" value={form.time}
-                    onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
-                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50" />
-                  {errors.time && <p className="text-red-400 text-xs">{errors.time}</p>}
+                  <label className="text-sm text-[var(--color-cream)]/80">
+                    Time
+                  </label>
+                  <input
+                    type="time"
+                    value={form.time}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, time: e.target.value }))
+                    }
+                    className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50"
+                  />
+                  {errors.time && (
+                    <p className="text-red-400 text-xs">{errors.time}</p>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-1 max-w-[160px]">
-                <label className="text-sm text-[var(--color-cream)]/80">Seats available</label>
-                <input type="number" min={1} max={8} value={form.seats}
-                  onChange={(e) => setForm((f) => ({ ...f, seats: Number(e.target.value) }))}
-                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50" />
+                <label className="text-sm text-[var(--color-cream)]/80">
+                  Seats available
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={8}
+                  value={form.seats}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, seats: Number(e.target.value) }))
+                  }
+                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] focus:outline-none focus:border-[var(--color-cream)]/50"
+                />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-cream)]/80">Note <span className="text-[var(--color-cream)]/40">(optional)</span></label>
-                <textarea rows={2} placeholder="e.g. Leaving at 8am sharp, can drop at bus station" value={form.note}
-                  onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
-                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50 resize-none" />
+                <label className="text-sm text-[var(--color-cream)]/80">
+                  Note{" "}
+                  <span className="text-[var(--color-cream)]/40">
+                    (optional)
+                  </span>
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. Leaving at 8am sharp, can drop at bus station"
+                  value={form.note}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, note: e.target.value }))
+                  }
+                  className="rounded border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-[var(--color-cream)] placeholder:text-[var(--color-cream)]/40 focus:outline-none focus:border-[var(--color-cream)]/50 resize-none"
+                />
               </div>
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button type="submit" disabled={submitting}
-                  className="inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5 disabled:opacity-60">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5 disabled:opacity-60"
+                >
                   {submitting ? "Saving…" : "Add ride"}
                 </button>
-                <button type="button" onClick={() => { setShowForm(false); setForm(EMPTY_FORM); setErrors({}); }}
-                  className="inline-flex justify-center rounded border border-[rgba(255,255,255,0.14)] text-[var(--color-cream)]/80 py-2 px-5 hover:bg-[rgba(255,255,255,0.04)]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForm(false);
+                    setForm(EMPTY_FORM);
+                    setErrors({});
+                  }}
+                  className="inline-flex justify-center rounded border border-[rgba(255,255,255,0.14)] text-[var(--color-cream)]/80 py-2 px-5 hover:bg-[rgba(255,255,255,0.04)]"
+                >
                   Cancel
                 </button>
               </div>
@@ -254,9 +386,13 @@ export default function RidesPage() {
           <p className="text-[var(--color-cream)]/50 text-sm">Loading rides…</p>
         ) : rides.length === 0 && !showForm ? (
           <div className="rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-8 text-center">
-            <p className="text-[var(--color-cream)]/60">You haven&rsquo;t offered any rides yet.</p>
-            <button onClick={() => setShowForm(true)}
-              className="mt-4 inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5">
+            <p className="text-[var(--color-cream)]/60">
+              You haven&rsquo;t offered any rides yet.
+            </p>
+            <button
+              onClick={() => setShowForm(true)}
+              className="mt-4 inline-flex justify-center rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold py-2 px-5"
+            >
               Offer your first ride
             </button>
           </div>
@@ -264,34 +400,57 @@ export default function RidesPage() {
           <ul className="flex flex-col gap-6">
             {rides.map((ride) => {
               const rideRequests = requests[ride.id] ?? [];
-              const pendingCount = rideRequests.filter((r) => r.status === "pending").length;
+              const pendingCount = rideRequests.filter(
+                (r) => r.status === "pending",
+              ).length;
               return (
-                <li key={ride.id} className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] overflow-hidden">
-
+                <li
+                  key={ride.id}
+                  className="rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] overflow-hidden"
+                >
                   {/* Ride summary */}
                   <div className="p-5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="flex flex-col gap-1">
-                      <p className="font-semibold text-[var(--color-cream)] text-lg">{ride.from} → {ride.to}</p>
+                      <p className="font-semibold text-[var(--color-cream)] text-lg">
+                        {ride.from} → {ride.to}
+                      </p>
                       {ride.driverName && (
                         <p className="text-sm text-[var(--color-cream)]/70">
-                          {ride.driverName} · <span className="text-amber-400">★★★★★</span> <span className="text-[var(--color-cream)]/40 text-xs">New driver</span>
+                          {ride.driverName} ·{" "}
+                          <span className="text-amber-400">★★★★★</span>{" "}
+                          <span className="text-[var(--color-cream)]/40 text-xs">
+                            New driver
+                          </span>
                         </p>
                       )}
                       <p className="text-sm text-[var(--color-cream)]/70">
                         {new Date(ride.date).toLocaleDateString("en-IE", {
-                          weekday: "short", day: "numeric", month: "short", year: "numeric",
-                        })} at {ride.time}
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}{" "}
+                        at {ride.time}
                       </p>
-                      <p className="text-sm text-[var(--color-cream)]/70">{ride.seats} seat{ride.seats !== 1 ? "s" : ""} available</p>
-                      {ride.note && <p className="text-sm text-[var(--color-cream)]/60 italic">{ride.note}</p>}
+                      <p className="text-sm text-[var(--color-cream)]/70">
+                        {ride.seats} seat{ride.seats !== 1 ? "s" : ""} available
+                      </p>
+                      {ride.note && (
+                        <p className="text-sm text-[var(--color-cream)]/60 italic">
+                          {ride.note}
+                        </p>
+                      )}
                       {pendingCount > 0 && (
                         <p className="text-sm text-[var(--color-cream)] font-semibold mt-1">
-                          {pendingCount} pending request{pendingCount !== 1 ? "s" : ""}
+                          {pendingCount} pending request
+                          {pendingCount !== 1 ? "s" : ""}
                         </p>
                       )}
                     </div>
-                    <button onClick={() => handleRemove(ride.id)}
-                      className="self-start sm:self-center text-sm text-[var(--color-cream)]/50 hover:text-red-400 border border-[rgba(255,255,255,0.1)] rounded px-3 py-1">
+                    <button
+                      onClick={() => handleRemove(ride.id)}
+                      className="self-start sm:self-center text-sm text-[var(--color-cream)]/50 hover:text-red-400 border border-[rgba(255,255,255,0.1)] rounded px-3 py-1"
+                    >
                       Remove
                     </button>
                   </div>
@@ -299,28 +458,41 @@ export default function RidesPage() {
                   {/* Seat requests */}
                   {rideRequests.length > 0 && (
                     <div className="border-t border-[rgba(255,255,255,0.07)] px-5 py-4 flex flex-col gap-3">
-                      <p className="text-xs text-[var(--color-cream)]/50 uppercase tracking-wide">Seat requests</p>
+                      <p className="text-xs text-[var(--color-cream)]/50 uppercase tracking-wide">
+                        Seat requests
+                      </p>
                       {rideRequests.map((req) => (
-                        <div key={req.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded border border-[rgba(255,255,255,0.07)] bg-[rgba(0,0,0,0.08)] px-4 py-3">
+                        <div
+                          key={req.id}
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded border border-[rgba(255,255,255,0.07)] bg-[rgba(0,0,0,0.08)] px-4 py-3"
+                        >
                           <div className="flex flex-col gap-1">
                             <p className="text-sm text-[var(--color-cream)]/90 font-mono">
                               {req.passengerWallet.slice(0, 12)}…
                             </p>
                             {req.message && (
-                              <p className="text-sm text-[var(--color-cream)]/70 italic">&ldquo;{req.message}&rdquo;</p>
+                              <p className="text-sm text-[var(--color-cream)]/70 italic">
+                                &ldquo;{req.message}&rdquo;
+                              </p>
                             )}
-                            <div className="mt-1">{statusBadge(req.status)}</div>
+                            <div className="mt-1">
+                              {statusBadge(req.status)}
+                            </div>
                           </div>
                           {req.status === "pending" && (
                             <div className="flex gap-2 self-start sm:self-center">
                               <button
-                                onClick={() => handleDecision(req.id, ride.id, "accepted")}
+                                onClick={() =>
+                                  handleDecision(req.id, ride.id, "accepted")
+                                }
                                 className="text-sm rounded bg-[var(--color-cream)] text-[var(--color-irish-green)] font-semibold px-3 py-1.5"
                               >
                                 Accept
                               </button>
                               <button
-                                onClick={() => handleDecision(req.id, ride.id, "declined")}
+                                onClick={() =>
+                                  handleDecision(req.id, ride.id, "declined")
+                                }
                                 className="text-sm rounded border border-[rgba(255,255,255,0.14)] text-[var(--color-cream)]/70 px-3 py-1.5 hover:bg-[rgba(255,255,255,0.04)]"
                               >
                                 Decline
@@ -330,13 +502,17 @@ export default function RidesPage() {
                           {req.status === "accepted" && (
                             <div className="flex gap-2 self-start sm:self-center">
                               <button
-                                onClick={() => handleDecision(req.id, ride.id, "completed")}
+                                onClick={() =>
+                                  handleDecision(req.id, ride.id, "completed")
+                                }
                                 className="text-sm rounded bg-blue-600 text-white font-semibold px-3 py-1.5 hover:bg-blue-500"
                               >
                                 Mark complete
                               </button>
                               <button
-                                onClick={() => handleDecision(req.id, ride.id, "disputed")}
+                                onClick={() =>
+                                  handleDecision(req.id, ride.id, "disputed")
+                                }
                                 className="text-sm rounded border border-amber-600/50 text-amber-400 px-3 py-1.5 hover:bg-amber-900/20"
                               >
                                 Dispute
