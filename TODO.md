@@ -4,7 +4,7 @@ Identified during the React skill audit (2026-05-15). Skipped because they touch
 
 ---
 
-## FIX 2 — Split `RidesManager.tsx` into focused components
+## FIX 1 — Split `RidesManager.tsx` into focused components
 
 **Why:** 456-line god component violates single-responsibility and ships more JS than needed in a single client bundle slice.
 
@@ -31,7 +31,7 @@ app/components/rides/
 
 ---
 
-## FIX 3 — Dynamic import `RidesManager` in `app/rides/page.tsx`
+## FIX 2 — Dynamic import `RidesManager` in `app/rides/page.tsx`
 
 **Why:** The entire Privy dependency tree is bundled eagerly even though `RidesManager` only activates post-auth. `next/dynamic` defers it and reduces the initial JS payload.
 
@@ -47,14 +47,14 @@ const RidesManager = dynamic(
   { ssr: false },
 );
 
-// wrap with Suspense (see FIX 4)
+// wrap with Suspense (see FIX 3)
 ```
 
-**Note:** Do this after FIX 2 so the import path is already the new location.
+**Note:** Do this after FIX 1 so the import path is already the new location.
 
 ---
 
-## FIX 4 — Add `Suspense` boundaries + improve `SignInShell` fallback
+## FIX 3 — Add `Suspense` boundaries + improve `SignInShell` fallback
 
 **Why:**
 
