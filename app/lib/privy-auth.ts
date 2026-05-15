@@ -17,7 +17,7 @@ type JwtPayload = {
 export class PrivyAuthError extends Error {
   constructor(
     message: string,
-    readonly status: 401 | 503 = 401,
+    readonly status: number = 401,
   ) {
     super(message);
     this.name = "PrivyAuthError";
