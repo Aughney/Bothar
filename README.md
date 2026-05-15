@@ -34,13 +34,14 @@ The crypto is invisible to the user. The win is "I got home and the driver got p
 
 ## Status
 
-Pre-MVP. Bootstrapped landing page on Next.js 16 + Tailwind v4 + Privy. The substantive docs:
+Pre-MVP. Working landing page, `/rides` driver management (Privy auth, Postgres-backed), and all static content pages on Next.js 16 + Tailwind v4 + Privy. The substantive docs:
 
 | File                                   | Purpose                                                                                                          |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | [`SPECIFICATION.md`](SPECIFICATION.md) | Product spec — user stories, ride lifecycle, escrow, on-chain model, ADR                                         |
 | [`DESIGN.md`](DESIGN.md)               | Visual identity — colours, typography, components ([format spec](https://github.com/google-labs-code/design.md)) |
 | [`AGENTS.md`](AGENTS.md)               | Repo state and verified commands for coding agents                                                               |
+| [`TODO.md`](TODO.md)                   | Deferred React/Next.js improvements (component splitting, dynamic imports, Suspense)                             |
 | [`anchor/README.md`](anchor/README.md) | Anchor program scaffold + toolchain notes                                                                        |
 
 ## License
