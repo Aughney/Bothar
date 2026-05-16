@@ -2,20 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/app/db";
 import { rides } from "@/app/db/schema";
 import { eq } from "drizzle-orm";
+import { PrivyAuthError, requirePrivyUserId } from "@/app/lib/privy-auth";
 
 export async function GET(req: NextRequest) {
-  const wallet = req.nextUrl.searchParams.get("wallet");
-  if (!wallet) {
-    return NextResponse.json({ error: "wallet required" }, { status: 400 });
-  }
   try {
+    const driverWallet = requirePrivyUserId(req);
     const rows = await getDb()
       .select()
       .from(rides)
-      .where(eq(rides.driverWallet, wallet))
+      .where(eq(rides.driverWallet, driverWallet))
       .orderBy(rides.createdAt);
     return NextResponse.json(rows);
   } catch (err) {
+    if (err instanceof PrivyAuthError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     console.error("GET /api/rides", err);
     return NextResponse.json({ error: "db error" }, { status: 500 });
   }
@@ -23,20 +24,35 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const driverWallet = requirePrivyUserId(req);
     const body = await req.json();
-    const { driverWallet, driverEmail, driverName, from, to, date, time, seats, note } = body;
+    const { from, to, date, time, seats, note } = body;
 
-    if (!driverWallet || !from || !to || !date || !time) {
-      return NextResponse.json({ error: "missing required fields" }, { status: 400 });
+    if (!from || !to || !date || !time) {
+      return NextResponse.json(
+        { error: "missing required fields" },
+        { status: 400 },
+      );
     }
 
     const [row] = await getDb()
       .insert(rides)
-      .values({ driverWallet, driverEmail: driverEmail ?? "", driverName: driverName ?? "", from, to, date, time, seats: Number(seats) || 1, note: note ?? "" })
+      .values({
+        driverWallet,
+        from,
+        to,
+        date,
+        time,
+        seats: Number(seats) || 1,
+        note: note ?? "",
+      })
       .returning();
 
     return NextResponse.json(row, { status: 201 });
   } catch (err) {
+    if (err instanceof PrivyAuthError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     console.error("POST /api/rides", err);
     return NextResponse.json({ error: "db error" }, { status: 500 });
   }

@@ -17,9 +17,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
         appearance: {
           theme: "light",
           accentColor: "#169B62",
+          walletChainType: "solana-only",
+          walletList: [
+            "detected_solana_wallets",
+            "phantom",
+            "solflare",
+            "backpack",
+            "wallet_connect",
+          ],
         },
         embeddedWallets: {
-          createOnLogin: "users-without-wallets",
+          solana: { createOnLogin: "users-without-wallets" },
         },
       }}
     >

@@ -4,9 +4,10 @@
 
 - Bootstrapped: Next.js 16 + React 19 + Tailwind v4 (App Router, TypeScript, ESLint) at the repo root. Privy (`@privy-io/react-auth` v2.x) and `@solana/web3.js` are installed.
 - App entry points: `app/layout.tsx`, `app/page.tsx`, `app/providers.tsx`, `app/globals.css`.
-- Shared UI: `app/components/{Footer,Navbar,Icons}.tsx`.
-- Implemented route folders: `app/{about,how-it-works,signin,team}/`.
-- Repo-root docs/content: `README.md`, `SPECIFICATION.md`, `DESIGN.md`, `terms.md`, `AGENTS.md`.
+- Shared UI: `app/components/{Footer,Navbar,MobileNav,Icons,RidesManager}.tsx`.
+- Implemented route folders: `app/{about,how-it-works,signin,team,rides}/`.
+- App Router infrastructure: `app/{error,loading,not-found}.tsx` (error boundary, route loading state, 404).
+- Repo-root docs/content: `README.md`, `SPECIFICATION.md`, `DESIGN.md`, `terms.md`, `AGENTS.md`, `TODO.md`.
 - Privy provider is env-gated on `NEXT_PUBLIC_PRIVY_APP_ID` (see `.env.example`); without it the app renders without Privy login.
 - `anchor/` is a placeholder directory with toolchain install + scaffold instructions; no Anchor program code exists yet.
 - No CI, no test suite, no Anchor program, no Supabase wiring yet.
@@ -47,7 +48,7 @@ Anchor commands are **not** yet runnable on this machine (Rust / Solana CLI / An
 - On-chain: escrow state, reputation accounts, ratings, and verification badges.
 - Off-chain (Postgres + private file storage): trip listings, origin/destination text, user nicknames, comments, push subscriptions, driver KYC submission metadata + verification status (Postgres), and driver licence images (Vercel Blob private store). Primary host: Vercel Marketplace; backup: Supabase. See `BACKEND.md`.
 - Anchor program scope: `init_trip`, `accept_trip`, `complete_trip`, `auto_release`, `dispute`, `resolve_dispute`, `submit_rating`, `issue_badge`, `revoke_badge`.
-- Routes — implemented: `/`, `/about`, `/how-it-works`, `/signin`, `/team`. Planned (not yet built): `/waitlist`, `/feed`, `/post`, `/trips/[id]`, `/rides`, `/u/[wallet]`, `/profile`, `/payments`, `/terms`, `/privacy`.
+- Routes — implemented: `/`, `/about`, `/how-it-works`, `/signin`, `/team`, `/rides`, `/terms`, `/privacy`. Planned (not yet built): `/waitlist`, `/feed`, `/post`, `/trips/[id]`, `/u/[wallet]`, `/profile`, `/payments`.
 
 ## Privy integration (v2.x)
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Navbar from "./Navbar";
 
@@ -67,13 +67,15 @@ describe("Navbar", () => {
     await user.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "true");
 
-    // Find the About link inside the mobile dropdown specifically — it's the
-    // second occurrence (the first is the always-mounted desktop nav).
-    const aboutLinks = screen.getAllByRole("link", { name: /^about$/i });
-    const mobileAboutLink = aboutLinks[1];
+    const mobileNav = screen.getByLabelText(/mobile navigation/i);
+    const mobileAboutLink = within(mobileNav).getByRole("link", {
+      name: /^about$/i,
+    });
     await user.click(mobileAboutLink);
 
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await waitFor(() => {
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+    });
   });
 
   it("links the mobile 'Find a lift' CTA to /signin?role=passenger", async () => {
