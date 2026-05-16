@@ -23,6 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             "phantom",
             "solflare",
             "backpack",
+            "coinbase_wallet",
             "wallet_connect",
           ],
         },
