@@ -15,10 +15,13 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "overrides": {
+    "@solana/web3.js": "1.95.8"
+  },
   "dependencies": {
     "@neondatabase/serverless": "1.1.0",
     "@privy-io/react-auth": "2.25.0",
-    "@solana/web3.js": "1.95.0",
+    "@solana/web3.js": "1.95.8",
     "drizzle-orm": "0.45.2",
     "next": "16.2.5",
     "react": "19.2.6",
